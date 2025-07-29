@@ -1,15 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Common_Cave_Dive.GrovalConst_CaveDive;
 
 
 namespace Common_Cave_Dive
-{ 
+{
     /// <summary>
     /// 共通定数
     /// </summary>
     public static class GrovalConst_CaveDive
     {
+        //オブジェクト識別辞書
+        public static readonly Dictionary<string, Obj_ID> Name_to_Obj_ID
+        = new Dictionary<string, Obj_ID>
+        {
+            { "PLAYER"      , Obj_ID.PLAYER },
+            { "TREASURE"    , Obj_ID.TREASURE },
+            { "SPIKE"       , Obj_ID.SPIKE },
+            { "SHARK"       , Obj_ID.SHARK },
+            { "ROCK"        , Obj_ID.ROCK },
+        };
+
         /// <summary>
         /// ゲームの状態
         /// </summary>
@@ -20,6 +32,16 @@ namespace Common_Cave_Dive
             PLAYING,        //ゲームプレイ
             GAMECLEAR,      //ゲームクリア
             GAMEOVER,       //ゲームオーバー
+        }
+
+        public enum Obj_ID
+        {
+            NONE,
+            PLAYER,     //プレイヤー
+            TREASURE,   //財宝
+            SPIKE,      //機雷
+            SHARK,      //サメ
+            ROCK,       //岩 : 後々増えるかも
         }
 
         /// <summary>

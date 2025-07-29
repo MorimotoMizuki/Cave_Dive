@@ -11,6 +11,15 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     [SerializeField] private GameObject _GameOver_obj;
     [SerializeField] private GameObject _GameClear_obj;
 
+    [Header("オブジェクトのプレハブ")]
+    [SerializeField] private GameObject[] _Obj_prefab;
+
+    [Header("生成オブジェクトの親オブジェクト")]
+    [SerializeField] private Transform _Obj_area;
+
+    [Header("カメラ")]
+    public Camera _Camera;
+
     //タイマー関係
     private float _Limit_time;   //制限時間
     private float _Current_time; //残り時間
@@ -41,7 +50,7 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                 }
             case GrovalConst_CaveDive.GameState.PLAYING:
                 {
-                    AirGage_Timer(); //空気ゲージタイマー
+                    //AirGage_Timer(); //空気ゲージタイマー
                     break;
                 }
             case GrovalConst_CaveDive.GameState.GAMECLEAR:

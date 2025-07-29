@@ -23,15 +23,32 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     public float _Max_Mask_Alpha = 0.8f;
     public float _Min_Mask_Alpha = 0.2f;
 
+    [Header("プレイヤーの回転速度")]
+    public float _Player_RotSpeed = 200.0f;
+
+    [Header("プレイヤーの基本の移動速度")]
+    public float _Player_MoveSpeed = 3.0f;
+
+    [Header("水中での摩擦・抵抗の強さ")]
+    public float _Water_Drag = 2.0f;
+
+    [Header("下方向の速度(浮力) : 1.0が通常時")]
+    public float _Downward_SpeedModifier = 0.7f;
+
     // Start is called before the first frame update
     void Start()
     {
-        GrovalNum_CaveDive.sGamePreference  = this;
-        GrovalNum_CaveDive.sGameManager     = game_manager;
-        GrovalNum_CaveDive.sClickManager    = click_manager;
-        GrovalNum_CaveDive.sMusicManager    = music_manager;
-        GrovalNum_CaveDive.sScreenChange    = screen_change;
-        GrovalNum_CaveDive.sImageManager    = image_manager;
+
+    }
+
+    private void Awake()
+    {
+        GrovalNum_CaveDive.sGamePreference = this;
+        GrovalNum_CaveDive.sGameManager = game_manager;
+        GrovalNum_CaveDive.sClickManager = click_manager;
+        GrovalNum_CaveDive.sMusicManager = music_manager;
+        GrovalNum_CaveDive.sScreenChange = screen_change;
+        GrovalNum_CaveDive.sImageManager = image_manager;
 
         //60fpsに設定
         Application.targetFrameRate = 60;

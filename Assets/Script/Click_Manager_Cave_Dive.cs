@@ -3,11 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Common_Cave_Dive;
+using UnityEditor;
 
 public class Click_Manager_Cave_Dive : MonoBehaviour
 {
     //ボタンクリック可否フラグ
-    [HideInInspector] public bool[] _Is_Button;
+    [HideInInspector] 
+    public bool[] _Is_Button;
+
+    //クリックフラグ
+    //[HideInInspector] public bool _Is_Touch_or_Click_down;   //クリックまたはタッチが開始された瞬間
+    //[HideInInspector] public bool _Is_Touch_or_Click_up;     //クリックまたはタッチが終了した瞬間
+
+    //クリック中または画面に触れている状態
+    [HideInInspector] 
+    public bool _Is_Touch_or_Click = false;
 
     // Start is called before the first frame update
     void Start()
@@ -18,7 +28,58 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        ////クリックまたはタッチが開始された瞬間（押し始め）を検出する
+        //_Is_Touch_or_Click_down = Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
+        ////クリックまたはタッチが終了した瞬間（離した）を検出する
+        //_Is_Touch_or_Click_up = Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended);
+
+        switch(GrovalNum_CaveDive.gNOW_SCREEN_ID)
+        {
+            case GrovalConst_CaveDive.Screen_ID.GAME:
+                {
+                    //ゲームプレイ中以外は終了
+                    if (GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.PLAYING)
+                        break;
+
+                    //クリック中または画面に触れている状態を検出する（押している間ずっと true）
+                    _Is_Touch_or_Click = Input.GetMouseButton(0) || (Input.touchCount > 0);
+
+                    break;
+                }
+        }
+
+
+        //エスケープキー入力
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            QuitGame();  //ゲーム終了
+        }
+    }
+
+    /// <summary>
+    /// マウス or タッチの入力位置を返す
+    /// </summary>
+    /// <returns>マウス or タッチの入力位置</returns>
+    public Vector2 GetInputPosition()
+    {
+        if (Input.touchCount > 0)
+            return Input.GetTouch(0).position;
+        else
+            return Input.mousePosition;
+    }
+
+    /// <summary>
+    /// ゲーム終了関数
+    /// </summary>
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        // エディタ上ではプレイモードを停止
+        EditorApplication.isPlaying = false;
+#else
+            // ビルド後はアプリを終了
+            Application.Quit();
+#endif
     }
 
     //スタートボタン : ゲーム画面
@@ -45,5 +106,4 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
         _Is_Button[(int)GrovalConst_CaveDive.Button_ID.TITLE] = true;     //ボタンフラグtrue
         //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
     }
-
 }
