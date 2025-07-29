@@ -3,6 +3,17 @@ using UnityEngine.UI;
 
 public class Image_Manager_Cave_Dive : MonoBehaviour
 {
+    [Header("ステージの背景の画像, 画像オブジェクト")]
+    public Sprite[] _BackGround_img;
+    public Image[]  _BackGround_obj;
+
+    [Header("マスク画像, 画像オブジェクト")]
+    public Sprite _Mask_img;
+    public Image  _Mask_obj;
+
+    [Header("空気ゲージ画像")]
+    public Image _AirGage_Fill;
+
     /// <summary>
     /// オブジェクトの表示切り替え
     /// </summary>

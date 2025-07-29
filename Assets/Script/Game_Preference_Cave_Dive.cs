@@ -13,9 +13,15 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     [SerializeField] private Screen_Change_Cave_Dive    screen_change;
     [SerializeField] private Image_Manager_Cave_Dive    image_manager;
 
+    [Header("ステージの空気ゲージ制限時間(秒)")]
+    public int[] _AirGage_Time;
+
     [Header("ゲーム判定画面に遷移する待機時間(秒)")]
     public float _Judge_Screen_Latency = 1.0f;
 
+    [Header("マスク画像の透明度の最大値と最小値")]
+    public float _Max_Mask_Alpha = 0.8f;
+    public float _Min_Mask_Alpha = 0.2f;
 
     // Start is called before the first frame update
     void Start()

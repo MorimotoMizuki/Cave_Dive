@@ -161,21 +161,27 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
                     GrovalNum_CaveDive.sGameManager.Reset_Stage();  //ステージリセット                                                                 
                     GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.CREATE_STAGE; //ステージ生成フェーズへ
 
-                    //int index = GrovalNum_CaveDive.gNOW_STAGE_LEVEL - 1; //配列呼び出すインデクス
-                    //if (index < GrovalNum_CaveDive.sImageManager._BackGround_img.Length)
-                    //{
-                    //    //背景画像設定
-                    //    for (int i = 0; i < GrovalNum_CaveDive.sImageManager._BackGround_obj.Length; i++)
-                    //        GrovalNum_CaveDive.sImageManager.Change_Image(GrovalNum_CaveDive.sImageManager._BackGround_obj[i], GrovalNum_CaveDive.sImageManager._BackGround_img[index]);
-                    //}
+                    int index = GrovalNum_CaveDive.gNOW_STAGE_LEVEL - 1; //配列呼び出すインデクス
+                    int time = 60; //制限時間
 
-                    ////マスク画像設定
-                    //GrovalNum_CaveDive.sImageManager.Change_Image(GrovalNum_CaveDive.sImageManager._Mask_obj, GrovalNum_CaveDive.sImageManager._Mask_img);
-                    ////マスク画像のアルファ値を最大値に変更
-                    //GrovalNum_CaveDive.sImageManager.Change_Alpha(GrovalNum_CaveDive.sImageManager._Mask_obj, GrovalNum_CaveDive.sGamePreference._Max_Mask_Alpha);
+                    //時間が設定されている場合
+                    if (index < GrovalNum_CaveDive.sGamePreference._AirGage_Time.Length)
+                        time = GrovalNum_CaveDive.sGamePreference._AirGage_Time[index];
 
-                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMECLEAR;
+                    //タイマーの時間を設定
+                    GrovalNum_CaveDive.sGameManager.Set_Limit_Time(time);
 
+                    if (index < GrovalNum_CaveDive.sImageManager._BackGround_img.Length)
+                    {
+                        //背景画像設定
+                        for (int i = 0; i < GrovalNum_CaveDive.sImageManager._BackGround_obj.Length; i++)
+                            GrovalNum_CaveDive.sImageManager.Change_Image(GrovalNum_CaveDive.sImageManager._BackGround_obj[i], GrovalNum_CaveDive.sImageManager._BackGround_img[index]);
+                    }
+
+                    //マスク画像設定
+                    GrovalNum_CaveDive.sImageManager.Change_Image(GrovalNum_CaveDive.sImageManager._Mask_obj, GrovalNum_CaveDive.sImageManager._Mask_img);
+                    //マスク画像のアルファ値を最大値に変更
+                    GrovalNum_CaveDive.sImageManager.Change_Alpha(GrovalNum_CaveDive.sImageManager._Mask_obj, GrovalNum_CaveDive.sGamePreference._Max_Mask_Alpha);
                     break;
                 }
             //クリア画面
