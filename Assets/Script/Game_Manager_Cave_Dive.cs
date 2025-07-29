@@ -24,6 +24,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     private float _Limit_time;   //制限時間
     private float _Current_time; //残り時間
 
+    //財宝の総数
+    private int _Treasure_sum = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,7 +53,7 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                 }
             case GrovalConst_CaveDive.GameState.PLAYING:
                 {
-                    //AirGage_Timer(); //空気ゲージタイマー
+                    AirGage_Timer(); //空気ゲージタイマー
                     break;
                 }
             case GrovalConst_CaveDive.GameState.GAMECLEAR:
@@ -84,7 +87,31 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Create_Stage()
     {
+        _Treasure_sum = 1; //仮
+
         GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.PLAYING;
+    }
+
+    /// <summary>
+    /// オブジェクトの削除処理
+    /// </summary>
+    /// <param name="target_obj">対象のゲームオブジェクト</param>
+    public void Delete_Obj(GameObject target_obj)
+    {
+        Destroy(target_obj);
+    }
+
+    /// <summary>
+    /// マスク画像のアルファ値の減少処理
+    /// </summary>
+    public void Dec_Mask_Alpha()
+    {
+        //アルファ値の幅
+        float dec_alpha = GrovalNum_CaveDive.sGamePreference._Max_Mask_Alpha - GrovalNum_CaveDive.sGamePreference._Min_Mask_Alpha;
+        //減少するアルファ値を風船の合計数で割って求める
+        dec_alpha /= _Treasure_sum;
+        //マスク画像のアルファ値を減少させる
+        GrovalNum_CaveDive.sImageManager.Decrement_Alpha(GrovalNum_CaveDive.sImageManager._Mask_obj, dec_alpha);
     }
 
     /// <summary>
@@ -118,6 +145,15 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         //タイマー(UI)に反映
         GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Current_time);
         return false;
+    }
+
+    /// <summary>
+    /// 空気ゲージ減少処理
+    /// </summary>
+    /// <param name="dec_time"></param>
+    public void Dec_AirGage_Timer(float dec_time)
+    {
+        _Current_time -= dec_time;
     }
 
 }

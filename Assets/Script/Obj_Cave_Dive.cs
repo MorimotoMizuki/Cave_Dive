@@ -8,7 +8,8 @@ public class Obj_Cave_Dive : MonoBehaviour
     #region 共通 ----------------------------------------------------------------------------------------------------------
 
     private Image _Img;             //画像情報
-    private Rigidbody2D _Rigid2D;   //Rigidbody2D情報                                      
+    private Rigidbody2D _Rigid2D;   //Rigidbody2D情報
+    private Collider2D _Collider2D; //Collider2D情報
 
     private GrovalConst_CaveDive.Obj_ID _Obj_ID = GrovalConst_CaveDive.Obj_ID.NONE;
 
@@ -18,7 +19,7 @@ public class Obj_Cave_Dive : MonoBehaviour
     void Start()
     {
         //オブジェクトのIDを設定
-        _Obj_ID = Obj_Identification();
+        _Obj_ID = Obj_Identification(gameObject.name);
 
         //オブジェクトの各情報を取得
         _Img = GetComponent<Image>();
@@ -98,17 +99,55 @@ public class Obj_Cave_Dive : MonoBehaviour
         _Rigid2D.velocity = transform.up * GrovalNum_CaveDive.sGamePreference._Player_MoveSpeed * speed_modifier;
     }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        //プレイヤー以外の場合は終了
+        if(_Obj_ID != GrovalConst_CaveDive.Obj_ID.PLAYER) 
+            return;
+
+        //衝突したオブジェクトIDを取得
+        GrovalConst_CaveDive.Obj_ID collision_obj_id = Obj_Identification(collision.name);
+
+        switch (collision_obj_id)
+        {
+            case GrovalConst_CaveDive.Obj_ID.TREASURE:
+                {
+                    //マスク画像のアルファ値を減少させる
+                    GrovalNum_CaveDive.sGameManager.Dec_Mask_Alpha();
+                    //財宝の削除
+                    GrovalNum_CaveDive.sGameManager.Delete_Obj(collision.gameObject);
+                    break;
+                }
+            case GrovalConst_CaveDive.Obj_ID.SPIKE:
+                {
+                    break;
+                }
+            case GrovalConst_CaveDive.Obj_ID.SHARK:
+                {
+                    //空気ゲージを減少
+                    GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(10);
+                    break;
+                }
+            case GrovalConst_CaveDive.Obj_ID.ROCK:
+                {
+                    //空気ゲージを減少
+                    GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(5);
+                    break;
+                }
+        }
+    }
+
     /// <summary>
     /// オブジェクトの識別
     /// </summary>
     /// <returns>オブジェクトID</returns>
-    private GrovalConst_CaveDive.Obj_ID Obj_Identification()
+    private GrovalConst_CaveDive.Obj_ID Obj_Identification(string obj_name)
     {
         //Name_to_Obj_ID: 文字列（部分一致用）とオブジェクトIDのマッピング辞書
         foreach (var pair in GrovalConst_CaveDive.Name_to_Obj_ID)
         {
             //ゲームオブジェクトの名前に、辞書のキー（判別用文字列）が含まれているか確認
-            if (gameObject.name.Contains(pair.Key))
+            if (obj_name.Contains(pair.Key))
             {
                 //一致した場合、対応するオブジェクトIDを返す
                 return pair.Value;
