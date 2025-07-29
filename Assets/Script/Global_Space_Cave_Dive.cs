@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,36 +6,43 @@ using UnityEngine;
 namespace Common_Cave_Dive
 { 
     /// <summary>
-    /// ‹¤’Ê’è”
+    /// å…±é€šå®šæ•°
     /// </summary>
     public static class GrovalConst_CaveDive
     {
         /// <summary>
-        /// ƒQ[ƒ€‚Ìó‘Ô
+        /// ã‚²ãƒ¼ãƒ ã®çŠ¶æ…‹
         /// </summary>
         public enum GameState
         {
-            READY,          //‘Ò‹@
-            CREATE_STAGE,   //ƒXƒe[ƒW¶¬
-            PLAYING,        //ƒQ[ƒ€ƒvƒŒƒC
-            GAMECLEAR,      //ƒQ[ƒ€ƒNƒŠƒA
-            GAMEOVER,       //ƒQ[ƒ€ƒI[ƒo[
+            READY,          //å¾…æ©Ÿ
+            CREATE_STAGE,   //ã‚¹ãƒ†ãƒ¼ã‚¸ç”Ÿæˆ
+            PLAYING,        //ã‚²ãƒ¼ãƒ ãƒ—ãƒ¬ã‚¤
+            GAMECLEAR,      //ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢
+            GAMEOVER,       //ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
         }
 
         /// <summary>
-        /// ‰æ–Ê‚ÌID
+        /// ç”»é¢ã®ID
         /// </summary>
         public enum Screen_ID
         {
-            TITLE,  //ƒ^ƒCƒgƒ‹‰æ–Ê
-            GAME,   //ƒQ[ƒ€‰æ–Ê
-            CLEAR,  //ƒNƒŠƒA‰æ–Ê
-            FADE,   //ƒtƒF[ƒh‰æ–Ê
+            TITLE,  //ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢
+            GAME,   //ã‚²ãƒ¼ãƒ ç”»é¢
+            CLEAR,  //ã‚¯ãƒªã‚¢ç”»é¢
             NONE,
         }
 
+        public enum Button_ID
+        {
+            START,
+            NEXT,
+            REPLAY,
+            TITLE,
+        }
+
         /// <summary>
-        /// BGM‚ÌID
+        /// BGMã®ID
         /// </summary>
         public enum BGM_ID
         {
@@ -45,32 +52,33 @@ namespace Common_Cave_Dive
 
         public enum SE_ID
         {
-            CLEAR,          //ƒNƒŠƒA
-            OVER,           //ƒQ[ƒ€ƒI[ƒo[
-            TAP,            //ƒ^ƒbƒv
-            PLAYER_MOVE,    //ƒvƒŒƒCƒ„[ˆÚ“®
+            CLEAR,          //ã‚¯ãƒªã‚¢æ™‚
+            OVER,           //ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼æ™‚
+            TAP,            //ã‚¿ãƒƒãƒ—æ™‚
+            PLAYER_MOVE,    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç§»å‹•æ™‚
         }
     }
 
     /// <summary>
-    /// ‹¤’Ê•Ï”
+    /// å…±é€šå¤‰æ•°
     /// </summary>
     public static class GrovalNum_CaveDive
     {
-        //Œ»İ‚Ì‰æ–ÊID
+        //ç¾åœ¨ã®ç”»é¢ID
         public static GrovalConst_CaveDive.Screen_ID gNOW_SCREEN_ID = GrovalConst_CaveDive.Screen_ID.TITLE;
 
-        //Œ»İ‚ÌƒtƒF[ƒYó‘Ô
+        //ç¾åœ¨ã®ãƒ•ã‚§ãƒ¼ã‚ºçŠ¶æ…‹
         public static GrovalConst_CaveDive.GameState gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.READY;
 
-        //Œ»İ‚ÌƒXƒe[ƒWƒŒƒxƒ‹
+        //ç¾åœ¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¬ãƒ™ãƒ«
         public static int gNOW_STAGE_LEVEL = 1;
 
-        //ŠeƒXƒNƒŠƒvƒg
+        //å„ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
         public static Game_Manager_Cave_Dive    sGameManager;
         public static Click_Manager_Cave_Dive   sClickManager;
         public static Game_Preference_Cave_Dive sGamePreference;
         public static Music_Manager_Cave_Dive   sMusicManager;
         public static Screen_Change_Cave_Dive   sScreenChange;
+        public static Image_Manager_Cave_Dive   sImageManager;
     }
 }

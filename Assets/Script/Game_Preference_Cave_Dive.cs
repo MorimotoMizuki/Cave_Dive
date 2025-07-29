@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +6,16 @@ using Common_Cave_Dive;
 
 public class Game_Preference_Cave_Dive : MonoBehaviour
 {
-    [Header("�e�X�N���v�g")]
+    [Header("各スクリプト")]
     [SerializeField] private Game_Manager_Cave_Dive     game_manager;
     [SerializeField] private Click_Manager_Cave_Dive    click_manager;
     [SerializeField] private Music_Manager_Cave_Dive    music_manager;
     [SerializeField] private Screen_Change_Cave_Dive    screen_change;
+    [SerializeField] private Image_Manager_Cave_Dive    image_manager;
+
+    [Header("ゲーム判定画面に遷移する待機時間(秒)")]
+    public float _Judge_Screen_Latency = 1.0f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -20,8 +25,9 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
         GrovalNum_CaveDive.sClickManager    = click_manager;
         GrovalNum_CaveDive.sMusicManager    = music_manager;
         GrovalNum_CaveDive.sScreenChange    = screen_change;
+        GrovalNum_CaveDive.sImageManager    = image_manager;
 
-        //60fps�ɐݒ�
+        //60fpsに設定
         Application.targetFrameRate = 60;
     }
 }
