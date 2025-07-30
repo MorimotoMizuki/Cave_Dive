@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-using Common_Cave_Dive;
+using static Common_Cave_Dive.GrovalConst_CaveDive;
+using static Common_Cave_Dive.GrovalNum_CaveDive;
+using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 public class Obj_Cave_Dive : MonoBehaviour
 {
@@ -11,7 +13,7 @@ public class Obj_Cave_Dive : MonoBehaviour
     private Rigidbody2D _Rigid2D;   //Rigidbody2D情報
     private Collider2D _Collider2D; //Collider2D情報
 
-    private GrovalConst_CaveDive.Obj_ID _Obj_ID = GrovalConst_CaveDive.Obj_ID.NONE;
+    private Obj_ID _Obj_ID = Obj_ID.NONE;
 
     #endregion ------------------------------------------------------------------------------------------------------------
 
@@ -40,13 +42,13 @@ public class Obj_Cave_Dive : MonoBehaviour
 
         switch(_Obj_ID)
         {
-            case GrovalConst_CaveDive.Obj_ID.PLAYER:
+            case Obj_ID.PLAYER:
             {
                 //摩擦で徐々に減速
-                _Rigid2D.drag = GrovalNum_CaveDive.sGamePreference._Water_Drag;
+                _Rigid2D.drag = sGamePreference._Water_Drag;
                 break;
             }
-            case GrovalConst_CaveDive.Obj_ID.SPIKE:
+            case Obj_ID.SPIKE:
             {
                 //初期座標設定
                 _Start_pos = transform.position;
@@ -61,7 +63,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         switch(_Obj_ID)
         {
             //プレイヤー
-            case GrovalConst_CaveDive.Obj_ID.PLAYER:
+            case Obj_ID.PLAYER:
             {
                 Player_Move();
 
@@ -69,7 +71,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 {
                     _Invincible_cnt++;
                     //プレイヤーの無敵時間以上になった場合
-                    if (_Invincible_cnt >= GrovalNum_CaveDive.sGamePreference._Player__Invincible_Frame)
+                    if (_Invincible_cnt >= sGamePreference._Player__Invincible_Frame)
                     {
                         _Invincible_cnt = 0;
                         _PlayerState = Player_State.PLAY;
@@ -79,24 +81,24 @@ public class Obj_Cave_Dive : MonoBehaviour
                 break;
             }
             //財宝
-            case GrovalConst_CaveDive.Obj_ID.TREASURE:
+            case Obj_ID.TREASURE:
             {
                 break;
             }
             //機雷
-            case GrovalConst_CaveDive.Obj_ID.SPIKE:
+            case Obj_ID.SPIKE:
             {
                 Spike_Move();
                 break;
             }
             //サメ
-            case GrovalConst_CaveDive.Obj_ID.SHARK:
+            case Obj_ID.SHARK:
             {
                 Shark_Move();
                 break;
             }
             //岩
-            case GrovalConst_CaveDive.Obj_ID.ROCK:
+            case Obj_ID.ROCK:
             {
                 break;
             }
@@ -109,20 +111,20 @@ public class Obj_Cave_Dive : MonoBehaviour
     private void Player_Move()
     {
         //プレイ中以外は終了
-        if(GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.PLAYING || 
+        if(gNOW_GAMESTATE != GameState.PLAYING || 
            _PlayerState == Player_State.NO_OPERATION)
         {
-            GrovalNum_CaveDive.sClickManager._Is_Touch_or_Click = false;
+            sClickManager._Is_Touch_or_Click = false;
             return;
         }
 
         //タッチしていない場合は終了
-        if (!GrovalNum_CaveDive.sClickManager._Is_Touch_or_Click)
+        if (!sClickManager._Is_Touch_or_Click)
             return;
 
         //タッチしている座標の取得
-        Vector3 tap_pos = GrovalNum_CaveDive.sClickManager.GetInputPosition();
-        tap_pos = GrovalNum_CaveDive.sGameManager._Camera.ScreenToWorldPoint(tap_pos);
+        Vector3 tap_pos = sClickManager.GetInputPosition();
+        tap_pos = sGameManager._Camera.ScreenToWorldPoint(tap_pos);
         tap_pos.z = 0.0f;
 
         //タッチ座標からプレイヤーまでの方向を計算
@@ -132,14 +134,14 @@ public class Obj_Cave_Dive : MonoBehaviour
         // 回転を滑らかに合わせる
         float target_angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         float current_angle = transform.eulerAngles.z;
-        float angle = Mathf.MoveTowardsAngle(current_angle, target_angle, GrovalNum_CaveDive.sGamePreference._Player_RotSpeed * Time.deltaTime);
+        float angle = Mathf.MoveTowardsAngle(current_angle, target_angle, sGamePreference._Player_RotSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
         // 浮力で速度補正
         float speed_modifier = 1f;
-        if (dir.y < 0) speed_modifier = GrovalNum_CaveDive.sGamePreference._Downward_SpeedModifier;
+        if (dir.y < 0) speed_modifier = sGamePreference._Downward_SpeedModifier;
 
-        _Rigid2D.velocity = transform.up * GrovalNum_CaveDive.sGamePreference._Player_MoveSpeed * speed_modifier;
+        _Rigid2D.velocity = transform.up * sGamePreference._Player_MoveSpeed * speed_modifier;
     }
 
     /// <summary>
@@ -148,9 +150,9 @@ public class Obj_Cave_Dive : MonoBehaviour
     private void Spike_Move()
     {
         //Mathf.Sinはサイン波で -1～ 1 の値を返す
-        float new_y = Mathf.Sin(Time.time * GrovalNum_CaveDive.sGamePreference._Spike_MoveSpeed);
+        float new_y = Mathf.Sin(Time.time * sGamePreference._Spike_MoveSpeed);
         //返された値を (移動幅)_Spike_Amplitude で拡大する
-        new_y *= GrovalNum_CaveDive.sGamePreference._Spike_Amplitude;
+        new_y *= sGamePreference._Spike_Amplitude;
 
         //X,Zはそのままで、Y だけ上下に移動させる
         transform.position = new Vector3(_Start_pos.x, _Start_pos.y + new_y, _Start_pos.z);
@@ -171,32 +173,32 @@ public class Obj_Cave_Dive : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         //プレイヤー以外の場合は終了
-        if(_Obj_ID != GrovalConst_CaveDive.Obj_ID.PLAYER) 
+        if(_Obj_ID != Obj_ID.PLAYER) 
             return;
 
         //衝突したオブジェクトIDを取得
-        GrovalConst_CaveDive.Obj_ID collision_obj_id = Obj_Identification(collision.name);
+        Obj_ID collision_obj_id = Obj_Identification(collision.name);
 
         switch (collision_obj_id)
         {
-            case GrovalConst_CaveDive.Obj_ID.TREASURE:
+            case Obj_ID.TREASURE:
             {
                 //マスク画像のアルファ値を減少させる
-                GrovalNum_CaveDive.sGameManager.Dec_Mask_Alpha();
+                sGameManager.Dec_Mask_Alpha();
                 //財宝の削除
-                GrovalNum_CaveDive.sGameManager.Delete_Obj(collision.gameObject);
+                sGameManager.Delete_Obj(collision.gameObject);
                 break;
             }
-            case GrovalConst_CaveDive.Obj_ID.SPIKE:
+            case Obj_ID.SPIKE:
             {
                 //ゲームオーバー
-                GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMEOVER;
+                gNOW_GAMESTATE = GameState.GAMEOVER;
                 break;
             }
-            case GrovalConst_CaveDive.Obj_ID.SHARK:
+            case Obj_ID.SHARK:
             {
                 //空気ゲージを減少
-                GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(10);
+                sGameManager.Dec_AirGage_Timer(10);
                 break;
             }
         }
@@ -209,15 +211,15 @@ public class Obj_Cave_Dive : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         //プレイヤー以外の場合は終了
-        if (_Obj_ID != GrovalConst_CaveDive.Obj_ID.PLAYER)
+        if (_Obj_ID != Obj_ID.PLAYER)
             return;
 
         //衝突したオブジェクトIDを取得
-        GrovalConst_CaveDive.Obj_ID collision_obj_id = Obj_Identification(collision.gameObject.name);
+        Obj_ID collision_obj_id = Obj_Identification(collision.gameObject.name);
 
         switch (collision_obj_id)
         {
-            case GrovalConst_CaveDive.Obj_ID.ROCK:
+            case Obj_ID.ROCK:
             {
                 //ぶつかった面の法線(プレイヤーを押し返す方向)
                 Vector2 normal = collision.contacts[0].normal;
@@ -226,14 +228,14 @@ public class Obj_Cave_Dive : MonoBehaviour
                 _Rigid2D.velocity = Vector2.zero;
 
                 //法線方向にノックバック
-                _Rigid2D.velocity = normal * GrovalNum_CaveDive.sGamePreference._Player_KnockBackSpeed;
+                _Rigid2D.velocity = normal * sGamePreference._Player_KnockBackSpeed;
 
                 if (_PlayerState == Player_State.PLAY)
                 {
                     //空気ゲージを減少
-                    GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(5);
+                    sGameManager.Dec_AirGage_Timer(5);
                     _PlayerState = Player_State.NO_OPERATION;
-                }                    
+                }
                 break;
             }
         }
@@ -243,10 +245,10 @@ public class Obj_Cave_Dive : MonoBehaviour
     /// オブジェクトの識別
     /// </summary>
     /// <returns>オブジェクトID</returns>
-    private GrovalConst_CaveDive.Obj_ID Obj_Identification(string obj_name)
+    private Obj_ID Obj_Identification(string obj_name)
     {
         //Name_to_Obj_ID: 文字列（部分一致用）とオブジェクトIDのマッピング辞書
-        foreach (var pair in GrovalConst_CaveDive.Name_to_Obj_ID)
+        foreach (var pair in Name_to_Obj_ID)
         {
             //ゲームオブジェクトの名前に、辞書のキー（判別用文字列）が含まれているか確認
             if (obj_name.Contains(pair.Key))
@@ -256,6 +258,6 @@ public class Obj_Cave_Dive : MonoBehaviour
             }
         }
         //どのキーとも一致しない場合、NONEを返す（未識別の意味）
-        return GrovalConst_CaveDive.Obj_ID.NONE;
+        return Obj_ID.NONE;
     }
 }

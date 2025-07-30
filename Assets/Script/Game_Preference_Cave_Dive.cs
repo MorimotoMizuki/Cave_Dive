@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-using Common_Cave_Dive;
+using static Common_Cave_Dive.GrovalConst_CaveDive;
+using static Common_Cave_Dive.GrovalNum_CaveDive;
+using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 public class Game_Preference_Cave_Dive : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
 
     [Header("ステージの空気ゲージ制限時間(秒)")]
     public int[] _AirGage_Time;
+
+    [Header("ステージごとの生成するキャラクターリスト\n座標 x,y :左上(-300, 360), 右下(300, -450)")]
+    public List<Stage_Data> _Stage_Chara_Data;
 
     [Header("ゲーム判定画面に遷移する待機時間(秒)")]
     public float _Judge_Screen_Latency = 1.0f;
@@ -52,13 +56,13 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
 
     private void Awake()
     {
-        GrovalNum_CaveDive.sGamePreference = this;
-        GrovalNum_CaveDive.sGameManager  = game_manager;
-        GrovalNum_CaveDive.sClickManager = click_manager;
-        GrovalNum_CaveDive.sMusicManager = music_manager;
-        GrovalNum_CaveDive.sScreenChange = screen_change;
-        GrovalNum_CaveDive.sImageManager = image_manager;
-        GrovalNum_CaveDive.sCsvRoader    = csv_roader;
+        sGamePreference = this;
+        sGameManager  = game_manager;
+        sClickManager = click_manager;
+        sMusicManager = music_manager;
+        sScreenChange = screen_change;
+        sImageManager = image_manager;
+        sCsvRoader    = csv_roader;
 
         //60fpsに設定
         Application.targetFrameRate = 60;

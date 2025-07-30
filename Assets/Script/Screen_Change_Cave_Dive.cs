@@ -2,7 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-using Common_Cave_Dive;
+using static Common_Cave_Dive.GrovalConst_CaveDive;
+using static Common_Cave_Dive.GrovalNum_CaveDive;
+using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 public class Screen_Change_Cave_Dive : MonoBehaviour
 {
@@ -31,7 +33,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             _Screen_obj[i].gameObject.SetActive(false);
 
         //タイトル画面を表示
-        _Screen_obj[(int)GrovalConst_CaveDive.Screen_ID.TITLE].gameObject.SetActive(true);
+        _Screen_obj[(int)Screen_ID.TITLE].gameObject.SetActive(true);
     }
 
     // Update is called once per frame
@@ -48,47 +50,47 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Clicked_Button()
     {
-        for(GrovalConst_CaveDive.Button_ID i = GrovalConst_CaveDive.Button_ID.START; i <= GrovalConst_CaveDive.Button_ID.TITLE;i++)
+        for(Button_ID i = Button_ID.START; i <= Button_ID.TITLE;i++)
         {
             //何らかのボタンをクリックしている場合
-            if (GrovalNum_CaveDive.sClickManager._Is_Button[(int)i])
+            if (sClickManager._Is_Button[(int)i])
             {
                 //表示非表示画面ID用
-                GrovalConst_CaveDive.Screen_ID display_id = GrovalConst_CaveDive.Screen_ID.NONE, invisible_id = GrovalConst_CaveDive.Screen_ID.NONE;
+                Screen_ID display_id = Screen_ID.NONE, invisible_id = Screen_ID.NONE;
 
                 switch (i)
                 {
-                    case GrovalConst_CaveDive.Button_ID.START:
+                    case Button_ID.START:
                         {
-                            display_id = GrovalConst_CaveDive.Screen_ID.GAME;
-                            invisible_id = GrovalConst_CaveDive.Screen_ID.TITLE;
+                            display_id = Screen_ID.GAME;
+                            invisible_id = Screen_ID.TITLE;
                             break;
                         }
-                    case GrovalConst_CaveDive.Button_ID.NEXT:
+                    case Button_ID.NEXT:
                         {
-                            display_id = GrovalConst_CaveDive.Screen_ID.GAME;
-                            invisible_id = GrovalConst_CaveDive.Screen_ID.CLEAR;
+                            display_id = Screen_ID.GAME;
+                            invisible_id = Screen_ID.CLEAR;
                             break;
                         }
-                    case GrovalConst_CaveDive.Button_ID.REPLAY:
+                    case Button_ID.REPLAY:
                         {
-                            display_id = GrovalConst_CaveDive.Screen_ID.GAME;
-                            invisible_id = GrovalConst_CaveDive.Screen_ID.GAME;
+                            display_id = Screen_ID.GAME;
+                            invisible_id = Screen_ID.GAME;
                             break;
                         }
-                    case GrovalConst_CaveDive.Button_ID.TITLE:
+                    case Button_ID.TITLE:
                         {
-                            display_id = GrovalConst_CaveDive.Screen_ID.TITLE;
-                            invisible_id = GrovalConst_CaveDive.Screen_ID.GAME;
+                            display_id = Screen_ID.TITLE;
+                            invisible_id = Screen_ID.GAME;
                             break;
                         }
                 }
                 //画面切り替え
-                if (display_id != GrovalConst_CaveDive.Screen_ID.NONE && invisible_id != GrovalConst_CaveDive.Screen_ID.NONE)
+                if (display_id != Screen_ID.NONE && invisible_id != Screen_ID.NONE)
                     Screen_Change_Start(display_id, invisible_id, true);
 
                 //フラグfalse
-                GrovalNum_CaveDive.sClickManager._Is_Button[(int)i] = false;
+                sClickManager._Is_Button[(int)i] = false;
 
             }
         }
@@ -100,10 +102,10 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
     /// <param name="display_id">表示したい画面を示すID</param>
     /// <param name="invisible_id">非表示にしたい画面を示すID</param>
     /// <param name="is_fade">フェードを行う可否</param>
-    public void Screen_Change_Start(GrovalConst_CaveDive.Screen_ID display_id, GrovalConst_CaveDive.Screen_ID invisible_id, bool is_fade)
+    public void Screen_Change_Start(Screen_ID display_id, Screen_ID invisible_id, bool is_fade)
     {
         //画面IDが未設定の場合は終了
-        if (display_id == GrovalConst_CaveDive.Screen_ID.NONE || invisible_id == GrovalConst_CaveDive.Screen_ID.NONE)
+        if (display_id == Screen_ID.NONE || invisible_id == Screen_ID.NONE)
             return;
 
         //コルーチン開始
@@ -117,79 +119,79 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
     /// <param name="invisible_id">非表示にする画面を示すID</param>
     /// <param name="is_fade">フェードを行う可否</param>
     /// <returns>コルーチン用 IEnumerator</returns>
-    private IEnumerator Screen_Change_Coroutine(GrovalConst_CaveDive.Screen_ID display_id, GrovalConst_CaveDive.Screen_ID invisible_id, bool is_fade)
+    private IEnumerator Screen_Change_Coroutine(Screen_ID display_id, Screen_ID invisible_id, bool is_fade)
     {
         Color fade_color = _Fade_img.color; //フェードする色
 
         if (is_fade)
         {
             //フェードする色の設定
-            if (display_id == GrovalConst_CaveDive.Screen_ID.CLEAR)
+            if (display_id == Screen_ID.CLEAR)
                 fade_color = Color.white;
             else
                 fade_color = Color.black;
 
             //フェードイン
-            GrovalNum_CaveDive.sImageManager.Change_Active(_Fade_img.gameObject, true);
+            sImageManager.Change_Active(_Fade_img.gameObject, true);
             yield return StartCoroutine(Fade(0f, 1f, fade_color)); //透明→色
         }
 
-        GrovalNum_CaveDive.sImageManager.Change_Active(_Screen_obj[(int)invisible_id].gameObject, false); //画面非表示            
-        GrovalNum_CaveDive.sImageManager.Change_Active(_Screen_obj[(int)display_id].gameObject, true);    //画面表示
+        sImageManager.Change_Active(_Screen_obj[(int)invisible_id].gameObject, false); //画面非表示            
+        sImageManager.Change_Active(_Screen_obj[(int)display_id].gameObject, true);    //画面表示
 
-        GrovalNum_CaveDive.gNOW_SCREEN_ID = display_id;      //現在の画面情報更新
+        gNOW_SCREEN_ID = display_id;      //現在の画面情報更新
 
         //現在表示されている画面
         switch (display_id)
         {
             //タイトル画面
-            case GrovalConst_CaveDive.Screen_ID.TITLE:
+            case Screen_ID.TITLE:
                 {
                     //BGMを再生
                     //GrovalNum_CaveDive.sMusicManager.BGM_Change(GrovalConst_CaveDive.BGM_ID.TITLE);
 
-                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.READY;//待機フェーズ
-                    GrovalNum_CaveDive.gNOW_STAGE_LEVEL = 1; //ステージレベルを1にする
+                    gNOW_GAMESTATE = GameState.READY;//待機フェーズ
+                    gNOW_STAGE_LEVEL = 1; //ステージレベルを1にする
                     break;
                 }
             //ゲーム画面
-            case GrovalConst_CaveDive.Screen_ID.GAME:
+            case Screen_ID.GAME:
                 {
                     //BGMを再生
                     //GrovalNum_CaveDive.sMusicManager.BGM_Change(GrovalConst_CaveDive.BGM_ID.GAME);
 
-                    GrovalNum_CaveDive.sGameManager.Reset_Stage();  //ステージリセット                                                                 
-                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.CREATE_STAGE; //ステージ生成フェーズへ
+                    sGameManager.Reset_Stage();  //ステージリセット                                                                 
+                    gNOW_GAMESTATE = GameState.CREATE_STAGE; //ステージ生成フェーズへ
 
-                    int index = GrovalNum_CaveDive.gNOW_STAGE_LEVEL - 1; //配列呼び出すインデクス
+                    int index = gNOW_STAGE_LEVEL - 1; //配列呼び出すインデクス
                     int time = 60; //制限時間
 
                     //時間が設定されている場合
-                    if (index < GrovalNum_CaveDive.sGamePreference._AirGage_Time.Length)
-                        time = GrovalNum_CaveDive.sGamePreference._AirGage_Time[index];
+                    if (index < sGamePreference._AirGage_Time.Length)
+                        time = sGamePreference._AirGage_Time[index];
 
                     //タイマーの時間を設定
-                    GrovalNum_CaveDive.sGameManager.Set_Limit_Time(time);
+                    sGameManager.Set_Limit_Time(time);
 
-                    if (index < GrovalNum_CaveDive.sImageManager._BackGround_img.Length)
+                    if (index < sImageManager._BackGround_img.Length)
                     {
                         //背景画像設定
-                        for (int i = 0; i < GrovalNum_CaveDive.sImageManager._BackGround_obj.Length; i++)
-                            GrovalNum_CaveDive.sImageManager.Change_Image(GrovalNum_CaveDive.sImageManager._BackGround_obj[i], GrovalNum_CaveDive.sImageManager._BackGround_img[index]);
+                        for (int i = 0; i < sImageManager._BackGround_obj.Length; i++)
+                            sImageManager.Change_Image(sImageManager._BackGround_obj[i], sImageManager._BackGround_img[index]);
                     }
 
                     //マスク画像設定
-                    GrovalNum_CaveDive.sImageManager.Change_Image(GrovalNum_CaveDive.sImageManager._Mask_obj, GrovalNum_CaveDive.sImageManager._Mask_img);
+                    sImageManager.Change_Image(sImageManager._Mask_obj, sImageManager._Mask_img);
                     //マスク画像のアルファ値を最大値に変更
-                    GrovalNum_CaveDive.sImageManager.Change_Alpha(GrovalNum_CaveDive.sImageManager._Mask_obj, GrovalNum_CaveDive.sGamePreference._Max_Mask_Alpha);
+                    sImageManager.Change_Alpha(sImageManager._Mask_obj, sGamePreference._Max_Mask_Alpha);
                     break;
                 }
             //クリア画面
-            case GrovalConst_CaveDive.Screen_ID.CLEAR:
+            case Screen_ID.CLEAR:
                 {
                     //GrovalNum_CaveDive.sMusicManager.SE_Play_BGM_Stop(GrovalConst_CaveDive.SE_ID.CLEAR); //SE再生 : BGM停止
 
-                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.READY;//待機フェーズ
+                    gNOW_GAMESTATE = GameState.READY;//待機フェーズ
                     _JudgeState = Judge_State.READY;
                     _Judge_cnt = 0;
                     break;
@@ -200,7 +202,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
         {
             // フェードアウト
             yield return StartCoroutine(Fade(1f, 0f, fade_color)); //色→透明
-            GrovalNum_CaveDive.sImageManager.Change_Active(_Fade_img.gameObject, false);
+            sImageManager.Change_Active(_Fade_img.gameObject, false);
         }
     }
 
@@ -236,7 +238,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             case Judge_State.READY:
             {
                 //クリア判定では無い場合は終了
-                if (GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.GAMECLEAR)
+                if (gNOW_GAMESTATE != GameState.GAMECLEAR)
                     break;
 
                 _JudgeState = Judge_State.JUDGE;
@@ -246,7 +248,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             case Judge_State.JUDGE:
             {
                 //カウントが指定の秒数以上の場合
-                if (_Judge_cnt >= GrovalNum_CaveDive.sGamePreference._Judge_Screen_Latency * Application.targetFrameRate)
+                if (_Judge_cnt >= sGamePreference._Judge_Screen_Latency * Application.targetFrameRate)
                     _JudgeState = Judge_State.SCREEN_CHANGE;
                 else
                     _Judge_cnt++;
@@ -256,13 +258,13 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             case Judge_State.SCREEN_CHANGE:
             {
                 //表示非表示画面ID用
-                GrovalConst_CaveDive.Screen_ID display_id = GrovalConst_CaveDive.Screen_ID.NONE, invisible_id = GrovalConst_CaveDive.Screen_ID.NONE;
+                Screen_ID display_id = Screen_ID.NONE, invisible_id = Screen_ID.NONE;
 
-                display_id   = GrovalConst_CaveDive.Screen_ID.CLEAR;
-                invisible_id = GrovalConst_CaveDive.Screen_ID.GAME;
+                display_id   = Screen_ID.CLEAR;
+                invisible_id = Screen_ID.GAME;
 
                 //画面切り替え
-                if (display_id != GrovalConst_CaveDive.Screen_ID.NONE && invisible_id != GrovalConst_CaveDive.Screen_ID.NONE)
+                if (display_id != Screen_ID.NONE && invisible_id != Screen_ID.NONE)
                     Screen_Change_Start(display_id, invisible_id, true);
 
                 _JudgeState = Judge_State.END;

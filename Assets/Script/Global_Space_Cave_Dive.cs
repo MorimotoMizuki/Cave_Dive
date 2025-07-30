@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using static Common_Cave_Dive.GrovalConst_CaveDive;
 
+using static Common_Cave_Dive.GrovalConst_CaveDive;
+using static Common_Cave_Dive.GrovalNum_CaveDive;
+using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 namespace Common_Cave_Dive
 {
@@ -19,7 +20,7 @@ namespace Common_Cave_Dive
             { "TREASURE"    , Obj_ID.TREASURE },
             { "SPIKE"       , Obj_ID.SPIKE },
             { "SHARK"       , Obj_ID.SHARK },
-            { "ROCK"        , Obj_ID.ROCK },
+            { "ROCK"       , Obj_ID.ROCK },
         };
 
         /// <summary>
@@ -34,6 +35,15 @@ namespace Common_Cave_Dive
             GAMEOVER,       //ゲームオーバー
         }
 
+        public enum GoalMoveState
+        {
+            INVISIBLE,      //非表示
+            DISPLAY,        //表示
+            PLAYER_IN,      //プレイヤーが入った
+            PLAYER_UP,      //プレイヤーが上昇
+            END,
+        }
+
         public enum Obj_ID
         {
             NONE,
@@ -41,7 +51,7 @@ namespace Common_Cave_Dive
             TREASURE,   //財宝
             SPIKE,      //機雷
             SHARK,      //サメ
-            ROCK,       //岩
+            ROCK,
         }
 
         public enum Rock_ID
@@ -91,16 +101,39 @@ namespace Common_Cave_Dive
         }
     }
 
+    public static class GrovalStruct_CaveDive
+    {
+        [System.Serializable]
+        public struct Character_Data
+        {
+            //オブジェクトID
+            public Obj_ID Obj_ID;
+
+            //座標
+            public Vector2 pos;
+        }
+
+        [System.Serializable]
+        public struct Stage_Data
+        {
+            //ステージ番号
+            public int StageNum;
+
+            //キャラクターのデータ
+            public Character_Data[] Chara_Data;
+        }
+    }
+
     /// <summary>
     /// 共通変数
     /// </summary>
     public static class GrovalNum_CaveDive
     {
         //現在の画面ID
-        public static GrovalConst_CaveDive.Screen_ID gNOW_SCREEN_ID = GrovalConst_CaveDive.Screen_ID.TITLE;
+        public static Screen_ID gNOW_SCREEN_ID = Screen_ID.TITLE;
 
         //現在のフェーズ状態
-        public static GrovalConst_CaveDive.GameState gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.READY;
+        public static GameState gNOW_GAMESTATE = GameState.READY;
 
         //現在のステージレベル
         public static int gNOW_STAGE_LEVEL = 1;

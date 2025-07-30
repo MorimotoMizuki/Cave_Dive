@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-using Common_Cave_Dive;
+using static Common_Cave_Dive.GrovalConst_CaveDive;
 
 public class Music_Manager_Cave_Dive : MonoBehaviour
 {
@@ -50,7 +50,7 @@ public class Music_Manager_Cave_Dive : MonoBehaviour
     /// BGM切り替え
     /// </summary>
     /// <param name="bgm_id">変えたいBGMの種類を示すID</param>
-    public void BGM_Change(GrovalConst_CaveDive.BGM_ID bgm_id)
+    public void BGM_Change(BGM_ID bgm_id)
     {
         //BGMのフェードと切り替えコルーチン
         StartCoroutine(Fade_And_Change_BGM(bgm_id, bgm_fade_time));
@@ -61,7 +61,7 @@ public class Music_Manager_Cave_Dive : MonoBehaviour
     /// </summary>
     /// <param name="bgm_id">BGMの種類を示すID</param>
     /// <returns>bgm_idが示すBGMの AudioClip</returns>
-    private AudioClip Search_BGM_Index_Num(GrovalConst_CaveDive.BGM_ID bgm_id)
+    private AudioClip Search_BGM_Index_Num(BGM_ID bgm_id)
     {
         if ((int)bgm_id >= bgm_clip.Length)
         {
@@ -78,7 +78,7 @@ public class Music_Manager_Cave_Dive : MonoBehaviour
     /// <param name="bgm_id">BGMの種類を示すID</param>
     /// <param name="fade_time">BGMがフェードする時間(秒)</param>
     /// <returns>コルーチン用 IEnumerator</returns>
-    private IEnumerator Fade_And_Change_BGM(GrovalConst_CaveDive.BGM_ID bgm_id, float fade_time)
+    private IEnumerator Fade_And_Change_BGM(BGM_ID bgm_id, float fade_time)
     {
         //BGMを探して割り当てる
         AudioClip new_bgm = Search_BGM_Index_Num(bgm_id);
@@ -146,7 +146,7 @@ public class Music_Manager_Cave_Dive : MonoBehaviour
     /// </summary>
     /// <param name="se_id">SEの種類を示すID</param>
     /// <returns>se_idが示すSEの AudioClip</returns>
-    private AudioClip Search_SE_Index_Num(GrovalConst_CaveDive.SE_ID se_id)
+    private AudioClip Search_SE_Index_Num(SE_ID se_id)
     {
         if ((int)se_id >= se_clip.Length)
         {
@@ -161,7 +161,7 @@ public class Music_Manager_Cave_Dive : MonoBehaviour
     /// BGMを止めてSEを再生
     /// </summary>
     /// <param name="se_id">SEの種類を示すID</param>
-    public void SE_Play_BGM_Stop(GrovalConst_CaveDive.SE_ID se_id)
+    public void SE_Play_BGM_Stop(SE_ID se_id)
     {
         //AudioSourceが割り当てられていない場合
         if (audio_source_bgm == null)
@@ -181,7 +181,7 @@ public class Music_Manager_Cave_Dive : MonoBehaviour
     /// SE再生
     /// </summary>
     /// <param name="se_id">SEの種類を示すID</param>
-    public void SE_Play(GrovalConst_CaveDive.SE_ID se_id)
+    public void SE_Play(SE_ID se_id)
     {
         //SEを探して割り当てる
         AudioClip play_se = Search_SE_Index_Num(se_id);

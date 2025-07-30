@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Common_Cave_Dive;
-using UnityEditor.Purchasing;
+using static Common_Cave_Dive.GrovalConst_CaveDive;
+using static Common_Cave_Dive.GrovalNum_CaveDive;
+using static Common_Cave_Dive.GrovalStruct_CaveDive;
+using static UnityEditor.PlayerSettings;
 
 public class Game_Manager_Cave_Dive : MonoBehaviour
 {
@@ -22,21 +24,27 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     [Header("岩オブジェクトの親オブジェクト")]
     [SerializeField] private Transform _Rock_area;
 
+    [Header("ゴールオブジェクト")]
+    [SerializeField] private GameObject _Goal_obj;
+
     [Header("カメラ")]
     public Camera _Camera;
+
+    //ゴールの処理のフェーズ用
+    public GoalMoveState _GoalMoveState;
 
     //岩マップデータ
     private List<List<int>> _Rock_StageMap = new List<List<int>>();
     //岩のサイズ
     private float _RockBlock_Size = 32.0f;
 
+    //財宝オブジェクトのリスト
+    private List<GameObject> _Treasure_List = new List<GameObject>();
+
     //タイマー関係
     private float _Limit_time;   //制限時間
     private float _Current_time; //残り時間
     private float _Damage_time;  //障害物で減らす時間
-
-    //財宝の総数
-    private int _Treasure_sum = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -48,36 +56,37 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     void Update()
     {
         //ゲーム画面以外の場合は終了
-        if (GrovalNum_CaveDive.gNOW_SCREEN_ID != GrovalConst_CaveDive.Screen_ID.GAME)
+        if (gNOW_SCREEN_ID != Screen_ID.GAME)
             return;
 
-        switch (GrovalNum_CaveDive.gNOW_GAMESTATE)
+        switch (gNOW_GAMESTATE)
         {
-            case GrovalConst_CaveDive.GameState.READY:
+            case GameState.READY:
                 {
                     break;
                 }
-            case GrovalConst_CaveDive.GameState.CREATE_STAGE:
+            case GameState.CREATE_STAGE:
                 {
                     Create_Stage();
                     break;
                 }
-            case GrovalConst_CaveDive.GameState.PLAYING:
+            case GameState.PLAYING:
                 {
                     AirGage_Timer(); //空気ゲージタイマー
+                    Goal_Open_Judge(); //ゴール開放判定
                     break;
                 }
-            case GrovalConst_CaveDive.GameState.GAMECLEAR:
+            case GameState.GAMECLEAR:
                 {
                     //ゲームクリア用オブジェクトの表示
-                    GrovalNum_CaveDive.sImageManager.Change_Active(_GameClear_obj, true);
+                    sImageManager.Change_Active(_GameClear_obj, true);
                     break;
                 }
-            case GrovalConst_CaveDive.GameState.GAMEOVER:
+            case GameState.GAMEOVER:
                 {
                     //ゲームオーバー用オブジェクトの表示
-                    GrovalNum_CaveDive.sImageManager.Change_Active( _GameOver_obj, true);
-                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.READY;
+                    sImageManager.Change_Active( _GameOver_obj, true);
+                    gNOW_GAMESTATE = GameState.READY;
                     break;
                 }
         }
@@ -89,14 +98,23 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     public void Reset_Stage()
     {
         //ゲームクリア、ゲームオーバー用のオブジェクトの非表示
-        GrovalNum_CaveDive.sImageManager.Change_Active(_GameClear_obj, false);
-        GrovalNum_CaveDive.sImageManager.Change_Active(_GameOver_obj, false);
+        sImageManager.Change_Active(_GameClear_obj, false);
+        sImageManager.Change_Active(_GameOver_obj, false);
+
+        //ゴールを非表示設定
+        _GoalMoveState = GoalMoveState.INVISIBLE;
+        //ゴールオブジェクト非表示
+        sImageManager.Change_Active(_Goal_obj, false);
+
+        _Treasure_List.Clear();
+        _Treasure_List = new List<GameObject>();
 
         //オブジェクトエリア内の子オブジェクトを全て削除
-        //foreach (Transform child in _Obj_area)
-        //    Delete_Obj(child.gameObject);
-        //foreach (Transform child in _Rock_area)
-        //    Delete_Obj(child.gameObject);
+        foreach (Transform child in _Obj_area)
+            Delete_Obj(child.gameObject);
+        foreach (Transform child in _Rock_area)
+            Delete_Obj(child.gameObject);
+
     }
 
     /// <summary>
@@ -104,12 +122,10 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Create_Stage()
     {
-        //_Treasure_sum = 1; //仮
-
-        string index = $"stage{GrovalNum_CaveDive.gNOW_STAGE_LEVEL}";
+        string index = $"stage{gNOW_STAGE_LEVEL}";
         //マップデータにステージデータがあるかチェック
-        if (GrovalNum_CaveDive.sCsvRoader._RockMapData.ContainsKey(index))
-            _Rock_StageMap = GrovalNum_CaveDive.sCsvRoader._RockMapData[index];
+        if (sCsvRoader._RockMapData.ContainsKey(index))
+            _Rock_StageMap = sCsvRoader._RockMapData[index];
         else
         {
             Debug.LogError("岩ステージマップデータがありません"); 
@@ -117,12 +133,27 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         }
 
         //岩オブジェクトマップ生成
-        Create_ObjMap(_Rock_StageMap);
+        Create_RockMap(_Rock_StageMap);
 
-        GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.PLAYING;
+        for(int i = 0; i < sGamePreference._Stage_Chara_Data.Count; i++)
+        {
+            //キャラデータのステージ番号とステージレベルが一致した場合
+            if (sGamePreference._Stage_Chara_Data[i].StageNum == gNOW_STAGE_LEVEL)
+            {
+                //キャラマップ生成
+                Create_CharaMap(sGamePreference._Stage_Chara_Data[i].Chara_Data);
+                break;
+            }
+        }
+
+        gNOW_GAMESTATE = GameState.PLAYING;
     }
 
-    private void Create_ObjMap(List<List<int>> map_data)
+    /// <summary>
+    /// 岩のステージマップ生成
+    /// </summary>
+    /// <param name="map_data"></param>
+    private void Create_RockMap(List<List<int>> map_data)
     {
         //マップの初期座標 : 左上端
         Vector2 pos = new Vector2(0 + _RockBlock_Size / 2, 0 - _RockBlock_Size / 2);
@@ -133,20 +164,51 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
             {
                 int index = map_data[y][x];
                 //空白ではない場合
-                if(index != (int)GrovalConst_CaveDive.Rock_ID.NONE)
+                if(index != (int)Rock_ID.NONE)
                 {
                     //オブジェクト生成
                     GameObject obj = Instantiate(_Rock_prefab[index - 1], _Rock_area);
                     //座標設定
                     obj.GetComponent<RectTransform>().anchoredPosition = pos;
                     //名前設定
-                    obj.name = $"{GrovalConst_CaveDive.Obj_ID.ROCK}";
+                    obj.name = $"{Obj_ID.ROCK}";
                 }
                 pos.x += _RockBlock_Size;
             }
             pos.x = 0 + _RockBlock_Size / 2;
             pos.y -= _RockBlock_Size;
         }
+    }
+
+    /// <summary>
+    /// キャラクターの生成処理
+    /// </summary>
+    /// <param name="chara_data"></param>
+    private void Create_CharaMap(Character_Data[] chara_data)
+    {
+        for(int i = 0;  i < chara_data.Length; i++)
+        {
+            int index = (int)chara_data[i].Obj_ID;
+
+            //オブジェクト生成
+            GameObject obj = Instantiate(_Obj_prefab[index - 1], _Obj_area);
+            //座標設定
+            obj.GetComponent<RectTransform>().anchoredPosition = chara_data[i].pos;
+            //名前設定
+            obj.name = $"{chara_data[i].Obj_ID}";
+
+            switch(chara_data[i].Obj_ID)
+            {
+                case Obj_ID.TREASURE:
+                    {
+                        //財宝のデータ追加
+                        _Treasure_List.Add(obj);
+                        break;
+                    }
+            }
+        }
+
+        Debug.Log(_Treasure_List.Count);
     }
 
     /// <summary>
@@ -159,16 +221,40 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     }
 
     /// <summary>
+    /// ゴール開放判定
+    /// </summary>
+    public void Goal_Open_Judge()
+    {
+        //ゴールが非表示フェーズ以外の場合は終了
+        if (_GoalMoveState != GoalMoveState.INVISIBLE)
+            return;
+
+        for(int i = 0; i < _Treasure_List.Count; i++)
+        {
+            //財宝オブジェクトがある場合は終了
+            if (_Treasure_List[i] != null)
+                return;
+        }
+
+        //ゴールを表示フェーズにする
+        _GoalMoveState = GoalMoveState.DISPLAY;
+
+        //ゴール表示
+        sImageManager.Change_Active(_Goal_obj, true);
+        Debug.Log("ゴール開放");
+    }
+
+    /// <summary>
     /// マスク画像のアルファ値の減少処理
     /// </summary>
     public void Dec_Mask_Alpha()
     {
         //アルファ値の幅
-        float dec_alpha = GrovalNum_CaveDive.sGamePreference._Max_Mask_Alpha - GrovalNum_CaveDive.sGamePreference._Min_Mask_Alpha;
+        float dec_alpha = sGamePreference._Max_Mask_Alpha - sGamePreference._Min_Mask_Alpha;
         //減少するアルファ値を風船の合計数で割って求める
-        dec_alpha /= _Treasure_sum;
+        dec_alpha /= _Treasure_List.Count;
         //マスク画像のアルファ値を減少させる
-        GrovalNum_CaveDive.sImageManager.Decrement_Alpha(GrovalNum_CaveDive.sImageManager._Mask_obj, dec_alpha);
+        sImageManager.Decrement_Alpha(sImageManager._Mask_obj, dec_alpha);
     }
 
     /// <summary>
@@ -181,8 +267,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         _Current_time = time;
         _Damage_time  = time;
         //タイマー初期表示
-        GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount     = Mathf.InverseLerp(0, _Limit_time, _Current_time);
-        GrovalNum_CaveDive.sImageManager._Damage_Gage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
+        sImageManager._AirGage_Fill.fillAmount     = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+        sImageManager._Damage_Gage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
     }
 
     /// <summary>
@@ -199,13 +285,13 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
             _Current_time = 0.0f;
 
             //タイマー(UI)に反映 : 残像が残らないようにするため
-            GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount
+            sImageManager._AirGage_Fill.fillAmount
                         = Mathf.InverseLerp(0, _Limit_time, _Current_time);
-            GrovalNum_CaveDive.sImageManager._Damage_Gage_Fill.fillAmount
+            sImageManager._Damage_Gage_Fill.fillAmount
                         = Mathf.InverseLerp(0, _Limit_time, _Current_time);
 
             //ゲームオーバー
-            GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMEOVER;
+            gNOW_GAMESTATE = GameState.GAMEOVER;
             return true;
         }
 
@@ -213,9 +299,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         _Damage_time = Mathf.MoveTowards(_Damage_time, _Current_time, Time.deltaTime * 5.0f);
 
         //タイマー(UI)に反映
-        GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount 
+        sImageManager._AirGage_Fill.fillAmount 
                     = Mathf.InverseLerp(0, _Limit_time, _Current_time);
-        GrovalNum_CaveDive.sImageManager._Damage_Gage_Fill.fillAmount 
+        sImageManager._Damage_Gage_Fill.fillAmount 
                     = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
 
         return false;

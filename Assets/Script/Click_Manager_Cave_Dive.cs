@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using Common_Cave_Dive;
+﻿using UnityEngine;
 using UnityEditor;
+
+using static Common_Cave_Dive.GrovalConst_CaveDive;
+using static Common_Cave_Dive.GrovalNum_CaveDive;
 
 public class Click_Manager_Cave_Dive : MonoBehaviour
 {
@@ -33,12 +32,12 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
         ////クリックまたはタッチが終了した瞬間（離した）を検出する
         //_Is_Touch_or_Click_up = Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended);
 
-        switch(GrovalNum_CaveDive.gNOW_SCREEN_ID)
+        switch(gNOW_SCREEN_ID)
         {
-            case GrovalConst_CaveDive.Screen_ID.GAME:
+            case Screen_ID.GAME:
                 {
                     //ゲームプレイ中以外は終了
-                    if (GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.PLAYING)
+                    if (gNOW_GAMESTATE != GameState.PLAYING)
                         break;
 
                     //クリック中または画面に触れている状態を検出する（押している間ずっと true）
@@ -85,25 +84,25 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
     //スタートボタン : ゲーム画面
     public void Button_Clicked_Start()
     {
-        _Is_Button[(int)GrovalConst_CaveDive.Button_ID.START] = true;     //ボタンフラグtrue
+        _Is_Button[(int)Button_ID.START] = true;     //ボタンフラグtrue
         //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
     }
     //ネクストボタン : クリア画面
     public void Button_Clicked_Next()
     {
-        _Is_Button[(int)GrovalConst_CaveDive.Button_ID.NEXT] = true;     //ボタンフラグtrue
+        _Is_Button[(int)Button_ID.NEXT] = true;     //ボタンフラグtrue
         //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
     }
     //リプレイボタン : オーバー画面
     public void Button_Clicked_Replay()
     {
-        _Is_Button[(int)GrovalConst_CaveDive.Button_ID.REPLAY] = true;     //ボタンフラグtrue
+        _Is_Button[(int)Button_ID.REPLAY] = true;     //ボタンフラグtrue
         //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
     }
     //タイトルボタン : オーバー画面
     public void Button_Clicked_Title()
     {
-        _Is_Button[(int)GrovalConst_CaveDive.Button_ID.TITLE] = true;     //ボタンフラグtrue
+        _Is_Button[(int)Button_ID.TITLE] = true;     //ボタンフラグtrue
         //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
     }
 }
