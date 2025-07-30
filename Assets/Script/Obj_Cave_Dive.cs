@@ -41,17 +41,17 @@ public class Obj_Cave_Dive : MonoBehaviour
         switch(_Obj_ID)
         {
             case GrovalConst_CaveDive.Obj_ID.PLAYER:
-                {
-                    //摩擦で徐々に減速
-                    _Rigid2D.drag = GrovalNum_CaveDive.sGamePreference._Water_Drag;
-                    break;
-                }
+            {
+                //摩擦で徐々に減速
+                _Rigid2D.drag = GrovalNum_CaveDive.sGamePreference._Water_Drag;
+                break;
+            }
             case GrovalConst_CaveDive.Obj_ID.SPIKE:
-                {
-                    //初期座標設定
-                    _Start_pos = transform.position;
-                    break;
-                }
+            {
+                //初期座標設定
+                _Start_pos = transform.position;
+                break;
+            }
         }
     }
 
@@ -62,44 +62,44 @@ public class Obj_Cave_Dive : MonoBehaviour
         {
             //プレイヤー
             case GrovalConst_CaveDive.Obj_ID.PLAYER:
+            {
+                Player_Move();
+
+                if(_PlayerState == Player_State.NO_OPERATION)
                 {
-                    Player_Move();
-
-                    if(_PlayerState == Player_State.NO_OPERATION)
+                    _Invincible_cnt++;
+                    //プレイヤーの無敵時間以上になった場合
+                    if (_Invincible_cnt >= GrovalNum_CaveDive.sGamePreference._Player__Invincible_Frame)
                     {
-                        _Invincible_cnt++;
-                        //プレイヤーの無敵時間以上になった場合
-                        if (_Invincible_cnt >= GrovalNum_CaveDive.sGamePreference._Player__Invincible_Frame)
-                        {
-                            _Invincible_cnt = 0;
-                            _PlayerState = Player_State.PLAY;
-                        }
+                        _Invincible_cnt = 0;
+                        _PlayerState = Player_State.PLAY;
                     }
-
-                    break;
                 }
+
+                break;
+            }
             //財宝
             case GrovalConst_CaveDive.Obj_ID.TREASURE:
-                {
-                    break;
-                }
+            {
+                break;
+            }
             //機雷
             case GrovalConst_CaveDive.Obj_ID.SPIKE:
-                {
-                    Spike_Move();
-                    break;
-                }
+            {
+                Spike_Move();
+                break;
+            }
             //サメ
             case GrovalConst_CaveDive.Obj_ID.SHARK:
-                {
-                    Shark_Move();
-                    break;
-                }
+            {
+                Shark_Move();
+                break;
+            }
             //岩
             case GrovalConst_CaveDive.Obj_ID.ROCK:
-                {
-                    break;
-                }
+            {
+                break;
+            }
         }
     }
 
@@ -180,25 +180,25 @@ public class Obj_Cave_Dive : MonoBehaviour
         switch (collision_obj_id)
         {
             case GrovalConst_CaveDive.Obj_ID.TREASURE:
-                {
-                    //マスク画像のアルファ値を減少させる
-                    GrovalNum_CaveDive.sGameManager.Dec_Mask_Alpha();
-                    //財宝の削除
-                    GrovalNum_CaveDive.sGameManager.Delete_Obj(collision.gameObject);
-                    break;
-                }
+            {
+                //マスク画像のアルファ値を減少させる
+                GrovalNum_CaveDive.sGameManager.Dec_Mask_Alpha();
+                //財宝の削除
+                GrovalNum_CaveDive.sGameManager.Delete_Obj(collision.gameObject);
+                break;
+            }
             case GrovalConst_CaveDive.Obj_ID.SPIKE:
-                {
-                    //ゲームオーバー
-                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMEOVER;
-                    break;
-                }
+            {
+                //ゲームオーバー
+                GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMEOVER;
+                break;
+            }
             case GrovalConst_CaveDive.Obj_ID.SHARK:
-                {
-                    //空気ゲージを減少
-                    GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(10);
-                    break;
-                }
+            {
+                //空気ゲージを減少
+                GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(10);
+                break;
+            }
         }
     }
 
@@ -218,26 +218,25 @@ public class Obj_Cave_Dive : MonoBehaviour
         switch (collision_obj_id)
         {
             case GrovalConst_CaveDive.Obj_ID.ROCK:
+            {
+                //ぶつかった面の法線(プレイヤーを押し返す方向)
+                Vector2 normal = collision.contacts[0].normal;
+
+                //速度リセット
+                _Rigid2D.velocity = Vector2.zero;
+
+                //法線方向にノックバック
+                _Rigid2D.velocity = normal * GrovalNum_CaveDive.sGamePreference._Player_KnockBackSpeed;
+
+                if (_PlayerState == Player_State.PLAY)
                 {
-                    //ぶつかった面の法線(プレイヤーを押し返す方向)
-                    Vector2 normal = collision.contacts[0].normal;
-
-                    //速度リセット
-                    _Rigid2D.velocity = Vector2.zero;
-
-                    //法線方向にノックバック
-                    _Rigid2D.velocity = normal * GrovalNum_CaveDive.sGamePreference._Player_KnockBackSpeed;
-
-                    if (_PlayerState == Player_State.PLAY)
-                    {
-                        //空気ゲージを減少
-                        GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(5);
-                        _PlayerState = Player_State.NO_OPERATION;
-                    }                    
-                    break;
-                }
+                    //空気ゲージを減少
+                    GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(5);
+                    _PlayerState = Player_State.NO_OPERATION;
+                }                    
+                break;
+            }
         }
-
     }
 
     /// <summary>
@@ -256,9 +255,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 return pair.Value;
             }
         }
-
         //どのキーとも一致しない場合、NONEを返す（未識別の意味）
         return GrovalConst_CaveDive.Obj_ID.NONE;
     }
-
 }

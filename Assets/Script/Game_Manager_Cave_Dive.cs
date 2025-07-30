@@ -14,11 +14,21 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     [Header("オブジェクトのプレハブ")]
     [SerializeField] private GameObject[] _Obj_prefab;
 
+    [Header("岩オブジェクトのプレハブ")]
+    [SerializeField] private GameObject[] _Rock_prefab;
+
     [Header("生成オブジェクトの親オブジェクト")]
     [SerializeField] private Transform _Obj_area;
+    [Header("岩オブジェクトの親オブジェクト")]
+    [SerializeField] private Transform _Rock_area;
 
     [Header("カメラ")]
     public Camera _Camera;
+
+    //岩マップデータ
+    private List<List<int>> _Rock_StageMap = new List<List<int>>();
+    //岩のサイズ
+    private float _RockBlock_Size = 32.0f;
 
     //タイマー関係
     private float _Limit_time;   //制限時間
@@ -85,6 +95,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         //オブジェクトエリア内の子オブジェクトを全て削除
         //foreach (Transform child in _Obj_area)
         //    Delete_Obj(child.gameObject);
+        //foreach (Transform child in _Rock_area)
+        //    Delete_Obj(child.gameObject);
     }
 
     /// <summary>
@@ -92,9 +104,49 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Create_Stage()
     {
-        _Treasure_sum = 1; //仮
+        //_Treasure_sum = 1; //仮
+
+        string index = $"stage{GrovalNum_CaveDive.gNOW_STAGE_LEVEL}";
+        //マップデータにステージデータがあるかチェック
+        if (GrovalNum_CaveDive.sCsvRoader._RockMapData.ContainsKey(index))
+            _Rock_StageMap = GrovalNum_CaveDive.sCsvRoader._RockMapData[index];
+        else
+        {
+            Debug.LogError("岩ステージマップデータがありません"); 
+            return;
+        }
+
+        //岩オブジェクトマップ生成
+        Create_ObjMap(_Rock_StageMap);
 
         GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.PLAYING;
+    }
+
+    private void Create_ObjMap(List<List<int>> map_data)
+    {
+        //マップの初期座標 : 左上端
+        Vector2 pos = new Vector2(0 + _RockBlock_Size / 2, 0 - _RockBlock_Size / 2);
+
+        for (int y = 0; y < map_data.Count; y++)
+        {
+            for(int x = 0; x < map_data[y].Count; x++)
+            {
+                int index = map_data[y][x];
+                //空白ではない場合
+                if(index != (int)GrovalConst_CaveDive.Rock_ID.NONE)
+                {
+                    //オブジェクト生成
+                    GameObject obj = Instantiate(_Rock_prefab[index - 1], _Rock_area);
+                    //座標設定
+                    obj.GetComponent<RectTransform>().anchoredPosition = pos;
+                    //名前設定
+                    obj.name = $"{GrovalConst_CaveDive.Obj_ID.ROCK}";
+                }
+                pos.x += _RockBlock_Size;
+            }
+            pos.x = 0 + _RockBlock_Size / 2;
+            pos.y -= _RockBlock_Size;
+        }
     }
 
     /// <summary>

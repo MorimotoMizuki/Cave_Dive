@@ -12,6 +12,7 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     [SerializeField] private Music_Manager_Cave_Dive    music_manager;
     [SerializeField] private Screen_Change_Cave_Dive    screen_change;
     [SerializeField] private Image_Manager_Cave_Dive    image_manager;
+    [SerializeField] private Csv_Roader_Cave_Dive       csv_roader;
 
     [Header("ステージの空気ゲージ制限時間(秒)")]
     public int[] _AirGage_Time;
@@ -52,11 +53,12 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     private void Awake()
     {
         GrovalNum_CaveDive.sGamePreference = this;
-        GrovalNum_CaveDive.sGameManager = game_manager;
+        GrovalNum_CaveDive.sGameManager  = game_manager;
         GrovalNum_CaveDive.sClickManager = click_manager;
         GrovalNum_CaveDive.sMusicManager = music_manager;
         GrovalNum_CaveDive.sScreenChange = screen_change;
         GrovalNum_CaveDive.sImageManager = image_manager;
+        GrovalNum_CaveDive.sCsvRoader    = csv_roader;
 
         //60fpsに設定
         Application.targetFrameRate = 60;

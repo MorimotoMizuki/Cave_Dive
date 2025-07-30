@@ -41,7 +41,17 @@ namespace Common_Cave_Dive
             TREASURE,   //財宝
             SPIKE,      //機雷
             SHARK,      //サメ
-            ROCK,       //岩 : 後々増えるかも
+            ROCK,       //岩
+        }
+
+        public enum Rock_ID
+        {
+            NONE,
+            SQUARE,                 //四角
+            RIGHTUP_TRIANGLE,       //右上三角
+            LEFTUP_TRIANGLE,        //左上三角
+            RIGHTDOWN_TRIANGLE,     //右下三角
+            LEFTDOWN_TRIANGLE,      //左下三角
         }
 
         /// <summary>
@@ -102,5 +112,6 @@ namespace Common_Cave_Dive
         public static Music_Manager_Cave_Dive   sMusicManager;
         public static Screen_Change_Cave_Dive   sScreenChange;
         public static Image_Manager_Cave_Dive   sImageManager;
+        public static Csv_Roader_Cave_Dive      sCsvRoader;
     }
 }

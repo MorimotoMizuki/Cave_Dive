@@ -138,7 +138,6 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
         GrovalNum_CaveDive.sImageManager.Change_Active(_Screen_obj[(int)display_id].gameObject, true);    //画面表示
 
         GrovalNum_CaveDive.gNOW_SCREEN_ID = display_id;      //現在の画面情報更新
-        Debug.Log(GrovalNum_CaveDive.gNOW_SCREEN_ID);
 
         //現在表示されている画面
         switch (display_id)
