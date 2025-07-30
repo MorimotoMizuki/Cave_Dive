@@ -11,8 +11,9 @@ public class Image_Manager_Cave_Dive : MonoBehaviour
     public Sprite _Mask_img;
     public Image  _Mask_obj;
 
-    [Header("空気ゲージ画像")]
+    [Header("空気ゲージ、ダメージゲージ画像オブジェクト")]
     public Image _AirGage_Fill;
+    public Image _Damage_Gage_Fill;
 
     /// <summary>
     /// オブジェクトの表示切り替え

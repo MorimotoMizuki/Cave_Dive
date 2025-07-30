@@ -15,6 +15,8 @@ public class Obj_Cave_Dive : MonoBehaviour
 
     #endregion ------------------------------------------------------------------------------------------------------------
 
+    private Vector3 _Start_pos;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,9 +30,17 @@ public class Obj_Cave_Dive : MonoBehaviour
         switch(_Obj_ID)
         {
             case GrovalConst_CaveDive.Obj_ID.PLAYER:
-                //摩擦で徐々に減速
-                _Rigid2D.drag = GrovalNum_CaveDive.sGamePreference._Water_Drag;
-                break;
+                {
+                    //摩擦で徐々に減速
+                    _Rigid2D.drag = GrovalNum_CaveDive.sGamePreference._Water_Drag;
+                    break;
+                }
+            case GrovalConst_CaveDive.Obj_ID.SPIKE:
+                {
+                    //初期座標設定
+                    _Start_pos = transform.position;
+                    break;
+                }
         }
     }
 
@@ -53,11 +63,13 @@ public class Obj_Cave_Dive : MonoBehaviour
             //機雷
             case GrovalConst_CaveDive.Obj_ID.SPIKE:
                 {
+                    Spike_Move();
                     break;
                 }
             //サメ
             case GrovalConst_CaveDive.Obj_ID.SHARK:
                 {
+                    Shark_Move();
                     break;
                 }
             //岩 : 後々増えるかも
@@ -73,6 +85,13 @@ public class Obj_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Player_Move()
     {
+        //プレイ中以外は終了
+        if(GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.PLAYING)
+        {
+            GrovalNum_CaveDive.sClickManager._Is_Touch_or_Click = false;
+            return;
+        }
+
         //タッチしていない場合は終了
         if (!GrovalNum_CaveDive.sClickManager._Is_Touch_or_Click)
             return;
@@ -99,6 +118,32 @@ public class Obj_Cave_Dive : MonoBehaviour
         _Rigid2D.velocity = transform.up * GrovalNum_CaveDive.sGamePreference._Player_MoveSpeed * speed_modifier;
     }
 
+    /// <summary>
+    /// 機雷の移動処理
+    /// </summary>
+    private void Spike_Move()
+    {
+        //Mathf.Sinはサイン波で -1～ 1 の値を返す
+        float new_y = Mathf.Sin(Time.time * GrovalNum_CaveDive.sGamePreference._Spike_MoveSpeed);
+        //返された値を (移動幅)_Spike_Amplitude で拡大する
+        new_y *= GrovalNum_CaveDive.sGamePreference._Spike_Amplitude;
+
+        //X,Zはそのままで、Y だけ上下に移動させる
+        transform.position = new Vector3(_Start_pos.x, _Start_pos.y + new_y, _Start_pos.z);
+    }
+
+    /// <summary>
+    /// サメの移動処理
+    /// </summary>
+    private void Shark_Move()
+    {
+
+    }
+
+    /// <summary>
+    /// 当たり判定
+    /// </summary>
+    /// <param name="collision"></param>
     void OnTriggerEnter2D(Collider2D collision)
     {
         //プレイヤー以外の場合は終了
@@ -120,6 +165,8 @@ public class Obj_Cave_Dive : MonoBehaviour
                 }
             case GrovalConst_CaveDive.Obj_ID.SPIKE:
                 {
+                    //ゲームオーバー
+                    GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMEOVER;
                     break;
                 }
             case GrovalConst_CaveDive.Obj_ID.SHARK:

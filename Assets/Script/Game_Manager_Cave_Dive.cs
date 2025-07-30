@@ -23,6 +23,7 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     //タイマー関係
     private float _Limit_time;   //制限時間
     private float _Current_time; //残り時間
+    private float _Damage_time;  //障害物で減らす時間
 
     //財宝の総数
     private int _Treasure_sum = 0;
@@ -80,6 +81,10 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         //ゲームクリア、ゲームオーバー用のオブジェクトの非表示
         GrovalNum_CaveDive.sImageManager.Change_Active(_GameClear_obj, false);
         GrovalNum_CaveDive.sImageManager.Change_Active(_GameOver_obj, false);
+
+        //オブジェクトエリア内の子オブジェクトを全て削除
+        //foreach (Transform child in _Obj_area)
+        //    Delete_Obj(child.gameObject);
     }
 
     /// <summary>
@@ -120,10 +125,12 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// <param name="time">制限時間</param>
     public void Set_Limit_Time(float time)
     {
+        _Limit_time   = time;
         _Current_time = time;
-        _Limit_time = time;
+        _Damage_time  = time;
         //タイマー初期表示
-        GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+        GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount     = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+        GrovalNum_CaveDive.sImageManager._Damage_Gage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
     }
 
     /// <summary>
@@ -138,12 +145,27 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         if (_Current_time <= 0.0f)
         {
             _Current_time = 0.0f;
+
+            //タイマー(UI)に反映 : 残像が残らないようにするため
+            GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount
+                        = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+            GrovalNum_CaveDive.sImageManager._Damage_Gage_Fill.fillAmount
+                        = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+
             //ゲームオーバー
             GrovalNum_CaveDive.gNOW_GAMESTATE = GrovalConst_CaveDive.GameState.GAMEOVER;
             return true;
         }
+
+        // 追従ゲージを追いつかせる
+        _Damage_time = Mathf.MoveTowards(_Damage_time, _Current_time, Time.deltaTime * 5.0f);
+
         //タイマー(UI)に反映
-        GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+        GrovalNum_CaveDive.sImageManager._AirGage_Fill.fillAmount 
+                    = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+        GrovalNum_CaveDive.sImageManager._Damage_Gage_Fill.fillAmount 
+                    = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
+
         return false;
     }
 
@@ -153,7 +175,16 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// <param name="dec_time"></param>
     public void Dec_AirGage_Timer(float dec_time)
     {
+        //現在の空気ゲージから減算
         _Current_time -= dec_time;
+
+        //0未満にはしない
+        if (_Current_time < 0.0f)
+            _Current_time = 0;
+
+        //一気に減らす場合のみ値を揃えてずれを作る
+        if(_Damage_time < _Current_time)
+            _Damage_time = _Current_time;
     }
 
 }

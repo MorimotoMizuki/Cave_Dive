@@ -23,11 +23,15 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     public float _Max_Mask_Alpha = 0.8f;
     public float _Min_Mask_Alpha = 0.2f;
 
+    [Header("プレイヤーの基本の移動速度")]
+    public float _Player_MoveSpeed = 3.0f;
     [Header("プレイヤーの回転速度")]
     public float _Player_RotSpeed = 200.0f;
 
-    [Header("プレイヤーの基本の移動速度")]
-    public float _Player_MoveSpeed = 3.0f;
+    [Header("機雷の基本の移動速度")]
+    public float _Spike_MoveSpeed = 1.0f;
+    [Header("機雷の上下運動の幅")]
+    public float _Spike_Amplitude = 1.0f;
 
     [Header("水中での摩擦・抵抗の強さ")]
     public float _Water_Drag = 2.0f;
