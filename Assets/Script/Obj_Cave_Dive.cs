@@ -15,7 +15,18 @@ public class Obj_Cave_Dive : MonoBehaviour
 
     #endregion ------------------------------------------------------------------------------------------------------------
 
+    //機雷の初期座標
     private Vector3 _Start_pos;
+
+    private enum Player_State
+    {
+        PLAY,           //通常
+        NO_OPERATION,   //操作不可
+    }
+
+    private Player_State _PlayerState = Player_State.PLAY;
+    //プレイヤーの無敵時間用
+    private int _Invincible_cnt = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +64,18 @@ public class Obj_Cave_Dive : MonoBehaviour
             case GrovalConst_CaveDive.Obj_ID.PLAYER:
                 {
                     Player_Move();
+
+                    if(_PlayerState == Player_State.NO_OPERATION)
+                    {
+                        _Invincible_cnt++;
+                        //プレイヤーの無敵時間以上になった場合
+                        if (_Invincible_cnt >= GrovalNum_CaveDive.sGamePreference._Player__Invincible_Frame)
+                        {
+                            _Invincible_cnt = 0;
+                            _PlayerState = Player_State.PLAY;
+                        }
+                    }
+
                     break;
                 }
             //財宝
@@ -72,7 +95,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                     Shark_Move();
                     break;
                 }
-            //岩 : 後々増えるかも
+            //岩
             case GrovalConst_CaveDive.Obj_ID.ROCK:
                 {
                     break;
@@ -86,7 +109,8 @@ public class Obj_Cave_Dive : MonoBehaviour
     private void Player_Move()
     {
         //プレイ中以外は終了
-        if(GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.PLAYING)
+        if(GrovalNum_CaveDive.gNOW_GAMESTATE != GrovalConst_CaveDive.GameState.PLAYING || 
+           _PlayerState == Player_State.NO_OPERATION)
         {
             GrovalNum_CaveDive.sClickManager._Is_Touch_or_Click = false;
             return;
@@ -141,9 +165,9 @@ public class Obj_Cave_Dive : MonoBehaviour
     }
 
     /// <summary>
-    /// 当たり判定
+    /// Trigger コライダーでの衝突判定「すり抜け判定」
     /// </summary>
-    /// <param name="collision"></param>
+    /// <param name="collision">衝突した相手の Collider2D</param>
     void OnTriggerEnter2D(Collider2D collision)
     {
         //プレイヤー以外の場合は終了
@@ -175,13 +199,45 @@ public class Obj_Cave_Dive : MonoBehaviour
                     GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(10);
                     break;
                 }
+        }
+    }
+
+    /// <summary>
+    /// 衝突判定「物理衝突判定」
+    /// </summary>
+    /// <param name="collision">衝突情報をまとめた Collision2D 型</param>
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        //プレイヤー以外の場合は終了
+        if (_Obj_ID != GrovalConst_CaveDive.Obj_ID.PLAYER)
+            return;
+
+        //衝突したオブジェクトIDを取得
+        GrovalConst_CaveDive.Obj_ID collision_obj_id = Obj_Identification(collision.gameObject.name);
+
+        switch (collision_obj_id)
+        {
             case GrovalConst_CaveDive.Obj_ID.ROCK:
                 {
-                    //空気ゲージを減少
-                    GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(5);
+                    //ぶつかった面の法線(プレイヤーを押し返す方向)
+                    Vector2 normal = collision.contacts[0].normal;
+
+                    //速度リセット
+                    _Rigid2D.velocity = Vector2.zero;
+
+                    //法線方向にノックバック
+                    _Rigid2D.velocity = normal * GrovalNum_CaveDive.sGamePreference._Player_KnockBackSpeed;
+
+                    if (_PlayerState == Player_State.PLAY)
+                    {
+                        //空気ゲージを減少
+                        GrovalNum_CaveDive.sGameManager.Dec_AirGage_Timer(5);
+                        _PlayerState = Player_State.NO_OPERATION;
+                    }                    
                     break;
                 }
         }
+
     }
 
     /// <summary>
