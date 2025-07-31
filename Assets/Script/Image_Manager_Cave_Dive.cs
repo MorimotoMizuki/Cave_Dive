@@ -15,6 +15,19 @@ public class Image_Manager_Cave_Dive : MonoBehaviour
     public Image _AirGage_Fill;
     public Image _Damage_Gage_Fill;
 
+    [Header("サメの画像 (左右の順番でお願いします)")]
+    public Sprite[] _Shark_img;
+    [Header("機雷の画像")]
+    public Sprite _Mine_img;
+    [Header("財宝の画像")]
+    public Sprite _Treasure_img;
+
+    [Header("ゴールの矢印画像")]
+    public Sprite _GoalArrow_img;
+
+    [Header("プレイヤーの画像")]
+    public Sprite[] _Player_img;
+
     /// <summary>
     /// オブジェクトの表示切り替え
     /// </summary>

@@ -27,19 +27,23 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     [Header("ゴールオブジェクト")]
     [SerializeField] private GameObject _Goal_obj;
 
+    [Header("出口を塞ぐ障害物オブジェクト")]
+    [SerializeField] private GameObject _Obstacle_obj;
+
     [Header("カメラ")]
     public Camera _Camera;
 
     //ゴールの処理のフェーズ用
-    public GoalMoveState _GoalMoveState;
+    [HideInInspector] public GoalMoveState _GoalMoveState;
 
     //岩マップデータ
     private List<List<int>> _Rock_StageMap = new List<List<int>>();
     //岩のサイズ
-    private float _RockBlock_Size = 32.0f;
+    private float _RockBlock_Size = 17.6f;
 
     //財宝オブジェクトのリスト
     private List<GameObject> _Treasure_List = new List<GameObject>();
+    //ゴール矢印オブジェクトのリスト
 
     //タイマー関係
     private float _Limit_time;   //制限時間
@@ -105,6 +109,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         _GoalMoveState = GoalMoveState.INVISIBLE;
         //ゴールオブジェクト非表示
         sImageManager.Change_Active(_Goal_obj, false);
+        //障害物オブジェクト表示
+        sImageManager.Change_Active(_Obstacle_obj, true);
 
         _Treasure_List.Clear();
         _Treasure_List = new List<GameObject>();
@@ -190,25 +196,30 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         {
             int index = (int)chara_data[i].Obj_ID;
 
-            //オブジェクト生成
-            GameObject obj = Instantiate(_Obj_prefab[index - 1], _Obj_area);
-            //座標設定
-            obj.GetComponent<RectTransform>().anchoredPosition = chara_data[i].pos;
-            //名前設定
-            obj.name = $"{chara_data[i].Obj_ID}";
-
-            switch(chara_data[i].Obj_ID)
+            //オブジェクトプレハブに設定されているオブジェクトだけ生成
+            if (index <= _Obj_prefab.Length && index > 0) 
             {
-                case Obj_ID.TREASURE:
+                //オブジェクト生成
+                GameObject obj = Instantiate(_Obj_prefab[index - 1], _Obj_area);
+                //座標設定
+                obj.GetComponent<RectTransform>().anchoredPosition = chara_data[i].pos;
+                //名前設定
+                obj.name = $"{chara_data[i].Obj_ID}";
+
+                switch (chara_data[i].Obj_ID)
+                {
+                    case Obj_ID.TREASURE:
                     {
                         //財宝のデータ追加
                         _Treasure_List.Add(obj);
                         break;
                     }
+                }
             }
+            else
+                Debug.Log($"{chara_data[i].Obj_ID}はプレハブにありません");
         }
 
-        Debug.Log(_Treasure_List.Count);
     }
 
     /// <summary>
@@ -241,6 +252,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
         //ゴール表示
         sImageManager.Change_Active(_Goal_obj, true);
+        //障害物オブジェクト非表示
+        sImageManager.Change_Active(_Obstacle_obj, false);
+
         Debug.Log("ゴール開放");
     }
 

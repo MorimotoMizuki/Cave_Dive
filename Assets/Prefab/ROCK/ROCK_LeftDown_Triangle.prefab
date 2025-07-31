@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1464271061629168825}
   - component: {fileID: 5939504146759336334}
   - component: {fileID: 8992985253420336372}
-  - component: {fileID: 6123659387868590180}
+  - component: {fileID: 4538368563876229625}
   m_Layer: 5
   m_Name: ROCK_LeftDown_Triangle
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 32, y: 32}
+  m_SizeDelta: {x: 17.6, y: 17.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6086819152085580308
 CanvasRenderer:
@@ -61,14 +61,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3962264, g: 0.08036668, b: 0.08036668, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 09831cff4b2ad8044a315e674236e625, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -90,6 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9514ef6b632d37b42b721c3a62593462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _Obj_ID: 7
 --- !u!50 &8992985253420336372
 Rigidbody2D:
   serializedVersion: 4
@@ -117,8 +118,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
---- !u!61 &6123659387868590180
-BoxCollider2D:
+--- !u!60 &4538368563876229625
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -159,6 +160,9 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 32, y: 32}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -8.8, y: 8.8}
+      - {x: 8.8, y: 8.8}
+      - {x: 8.8, y: -8.8}
+  m_UseDelaunayMesh: 0

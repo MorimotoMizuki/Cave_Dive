@@ -18,7 +18,7 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     [Header("ステージの空気ゲージ制限時間(秒)")]
     public int[] _AirGage_Time;
 
-    [Header("ステージごとの生成するキャラクターリスト\n座標 x,y :左上(-300, 360), 右下(300, -450)")]
+    [Header("ステージごとの生成するキャラクターリスト\n\n座標 x,y :左上(-300, 360), 右下(300, -450)\n\n※オブジェクトのプレハブに設定していないオブジェクトは生成できません")]
     public List<Stage_Data> _Stage_Chara_Data;
 
     [Header("ゲーム判定画面に遷移する待機時間(秒)")]
@@ -38,9 +38,14 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     public float _Player_KnockBackSpeed = 3.0f;
 
     [Header("機雷の基本の移動速度")]
-    public float _Spike_MoveSpeed = 1.0f;
+    public float _Mine_MoveSpeed = 1.0f;
     [Header("機雷の上下運動の幅")]
-    public float _Spike_Amplitude = 1.0f;
+    public float _Mine_Amplitude = 1.0f;
+
+    [Header("サメの基本の移動速度")]
+    public float _Shark_MoveSpeed = 1.0f;
+    [Header("サメの左右運動の幅")]
+    public float _Shark_Amplitude = 1.0f;
 
     [Header("水中での摩擦・抵抗の強さ")]
     public float _Water_Drag = 2.0f;

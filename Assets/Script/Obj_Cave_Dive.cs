@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Common_Cave_Dive;
+using UnityEngine;
 using UnityEngine.UI;
 
 using static Common_Cave_Dive.GrovalConst_CaveDive;
@@ -13,12 +14,23 @@ public class Obj_Cave_Dive : MonoBehaviour
     private Rigidbody2D _Rigid2D;   //Rigidbody2D情報
     private Collider2D _Collider2D; //Collider2D情報
 
-    private Obj_ID _Obj_ID = Obj_ID.NONE;
+    [Header("オブジェクトID")]
+    [SerializeField] private Obj_ID _Obj_ID = Obj_ID.NONE;
 
     #endregion ------------------------------------------------------------------------------------------------------------
 
-    //機雷の初期座標
+    Transform _PlayerArrow;
+
+    //初期座標
     private Vector3 _Start_pos;
+    //移動幅保存用
+    private float _Keep_sin = 0.0f;
+    private float _Keep_diff = 0.0f;
+    //方向転換用
+    private Vector2 _Dir;
+
+    //初回起動用
+    private bool _Is_once = true;
 
     private enum Player_State
     {
@@ -34,27 +46,18 @@ public class Obj_Cave_Dive : MonoBehaviour
     void Start()
     {
         //オブジェクトのIDを設定
-        _Obj_ID = Obj_Identification(gameObject.name);
+        if(_Obj_ID == Obj_ID.NONE)
+            _Obj_ID = Obj_Identification(gameObject.name);
 
         //オブジェクトの各情報を取得
         _Img = GetComponent<Image>();
         _Rigid2D = GetComponent<Rigidbody2D>();
 
-        switch(_Obj_ID)
-        {
-            case Obj_ID.PLAYER:
-            {
-                //摩擦で徐々に減速
-                _Rigid2D.drag = sGamePreference._Water_Drag;
-                break;
-            }
-            case Obj_ID.SPIKE:
-            {
-                //初期座標設定
-                _Start_pos = transform.position;
-                break;
-            }
-        }
+        //初期座標設定
+        _Start_pos = transform.position;
+
+        //各オブジェクトの初期設定
+        Obj_Initial_Setting();
     }
 
     // Update is called once per frame
@@ -65,19 +68,49 @@ public class Obj_Cave_Dive : MonoBehaviour
             //プレイヤー
             case Obj_ID.PLAYER:
             {
-                Player_Move();
+                //プレイヤーのアニメーション処理
+                Player_Animation();
 
-                if(_PlayerState == Player_State.NO_OPERATION)
+                switch (sGameManager._GoalMoveState)
                 {
-                    _Invincible_cnt++;
-                    //プレイヤーの無敵時間以上になった場合
-                    if (_Invincible_cnt >= sGamePreference._Player__Invincible_Frame)
+                    case GoalMoveState.INVISIBLE:
+                    case GoalMoveState.DISPLAY:
                     {
-                        _Invincible_cnt = 0;
-                        _PlayerState = Player_State.PLAY;
+                        //プレイヤーの移動処理
+                        Player_Move();
+
+                        //プレイヤーの矢印の表示設定をタッチの可否で切り替える
+                        sImageManager.Change_Active(_PlayerArrow.gameObject, sClickManager._Is_Touch_or_Click);
+
+                        if (_PlayerState == Player_State.NO_OPERATION)
+                        {
+                            _Invincible_cnt++;
+                            //プレイヤーの無敵時間以上になった場合
+                            if (_Invincible_cnt >= sGamePreference._Player__Invincible_Frame)
+                            {
+                                _Invincible_cnt = 0;
+                                _PlayerState = Player_State.PLAY;
+                            }
+                        }
+                        break;
+                    }
+                    case GoalMoveState.PLAYER_IN:
+                    {
+                        _Rigid2D.velocity = transform.up * sGamePreference._Player_MoveSpeed;
+
+                        //画面外処理
+                        if (Out_Screen(gameObject))
+                            sGameManager._GoalMoveState = GoalMoveState.END;
+
+                            break;
+                    }
+                    case GoalMoveState.END:
+                    {
+                        gNOW_GAMESTATE = GameState.GAMECLEAR;
+                        sGameManager.Delete_Obj(gameObject);
+                        break;
                     }
                 }
-
                 break;
             }
             //財宝
@@ -86,7 +119,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 break;
             }
             //機雷
-            case Obj_ID.SPIKE:
+            case Obj_ID.MINE:
             {
                 Spike_Move();
                 break;
@@ -102,6 +135,64 @@ public class Obj_Cave_Dive : MonoBehaviour
             {
                 break;
             }
+            case Obj_ID.GOAL_ARROW:
+            {
+                if(sGameManager._GoalMoveState == GoalMoveState.DISPLAY && _Is_once)
+                {
+                    //不透明にする
+                    sImageManager.Change_Alpha(_Img, 1.0f);
+                    _Is_once = false;
+                }
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 各オブジェクトの初期設定
+    /// </summary>
+    private void Obj_Initial_Setting()
+    {
+        switch (_Obj_ID)
+        {
+            case Obj_ID.PLAYER:
+                {
+                    //画像設定
+                    sImageManager.Change_Image(_Img, sImageManager._Player_img[0]);
+                    //摩擦で徐々に減速
+                    _Rigid2D.drag = sGamePreference._Water_Drag;
+
+                    //プレイヤーの子オブジェクトの情報を取得
+                    _PlayerArrow = transform.GetChild(0);
+                    break;
+                }
+            case Obj_ID.TREASURE:
+                {
+                    //画像設定
+                    sImageManager.Change_Image(_Img, sImageManager._Treasure_img);
+                    break;
+                }
+            case Obj_ID.MINE:
+                {
+                    //画像設定
+                    sImageManager.Change_Image(_Img, sImageManager._Mine_img);
+                    break;
+                }
+            case Obj_ID.SHARK:
+                {
+                    //画像設定
+                    sImageManager.Change_Image(_Img, sImageManager._Shark_img[(int)Dir_ID.RIGHT]);
+                    _Dir.x = 1.0f;
+                    break;
+                }
+            case Obj_ID.GOAL_ARROW:
+                {
+                    //画像設定
+                    sImageManager.Change_Image(_Img, sImageManager._GoalArrow_img);
+                    //透明にする
+                    sImageManager.Change_Alpha(_Img, 0.0f);
+                    break;
+                }
         }
     }
 
@@ -128,20 +219,52 @@ public class Obj_Cave_Dive : MonoBehaviour
         tap_pos.z = 0.0f;
 
         //タッチ座標からプレイヤーまでの方向を計算
-        Vector3 dir = tap_pos - transform.position;
-        dir = dir.normalized; //正規化
+        _Dir = tap_pos - transform.position;
+        _Dir = _Dir.normalized; //正規化
 
         // 回転を滑らかに合わせる
-        float target_angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        float target_angle = Mathf.Atan2(_Dir.y, _Dir.x) * Mathf.Rad2Deg - 90f;
         float current_angle = transform.eulerAngles.z;
         float angle = Mathf.MoveTowardsAngle(current_angle, target_angle, sGamePreference._Player_RotSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
         // 浮力で速度補正
         float speed_modifier = 1f;
-        if (dir.y < 0) speed_modifier = sGamePreference._Downward_SpeedModifier;
+        if (_Dir.y < 0) speed_modifier = sGamePreference._Downward_SpeedModifier;
 
         _Rigid2D.velocity = transform.up * sGamePreference._Player_MoveSpeed * speed_modifier;
+    }
+
+    /// <summary>
+    /// プレイヤーのアニメーション処理
+    /// </summary>
+    private void Player_Animation()
+    {
+        //ベクトルの角度(ラジアン)を度に変換
+        float angle = Mathf.Atan2(_Dir.y, _Dir.x) * Mathf.Rad2Deg;
+        if (angle < 0) angle += 360f;
+
+        string direction = "";
+
+        if (angle >= 75f && angle <= 105f)
+        {
+            direction = "上";
+        }
+        else if (angle >= 255f && angle <= 285f)
+        {
+            direction = "下";
+        }
+        else if (angle >= 105f && angle <= 255f)
+        {
+            direction = "左";
+        }
+        else
+        {
+            // 右（角度が 285° 以上 360°以下 または 0° 以上 75°以下）
+            direction = "右";
+        }
+
+        Debug.Log($"Direction: {direction}__{angle}");
     }
 
     /// <summary>
@@ -150,9 +273,9 @@ public class Obj_Cave_Dive : MonoBehaviour
     private void Spike_Move()
     {
         //Mathf.Sinはサイン波で -1～ 1 の値を返す
-        float new_y = Mathf.Sin(Time.time * sGamePreference._Spike_MoveSpeed);
-        //返された値を (移動幅)_Spike_Amplitude で拡大する
-        new_y *= sGamePreference._Spike_Amplitude;
+        float new_y = Mathf.Sin(Time.time * sGamePreference._Mine_MoveSpeed);
+        //返された値を (移動幅)_Mine_Amplitude で拡大する
+        new_y *= sGamePreference._Mine_Amplitude;
 
         //X,Zはそのままで、Y だけ上下に移動させる
         transform.position = new Vector3(_Start_pos.x, _Start_pos.y + new_y, _Start_pos.z);
@@ -163,7 +286,30 @@ public class Obj_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Shark_Move()
     {
+        //Mathf.Sinはサイン波で -1～ 1 の値を返す
+        float current_sin = Mathf.Sin(Time.time * sGamePreference._Shark_MoveSpeed);
+        //返された値を (移動幅)_Shark_Amplitude で拡大する
+        float new_x = current_sin * sGamePreference._Shark_Amplitude;
 
+        //Y,Zはそのままで、X だけ上下に移動させる
+        transform.position = new Vector3(_Start_pos.x + new_x, _Start_pos.y, _Start_pos.z);
+
+        //勾配(差分)
+        float diff = current_sin - _Keep_sin;
+
+        // 勾配の符号が変わったら極値
+        if (_Keep_diff != 0 && Mathf.Sign(_Keep_diff) != Mathf.Sign(diff))
+        {
+            //方向を反転
+            _Dir.x *= -1.0f;
+            if (_Dir.x == 1.0f)
+                sImageManager.Change_Image(_Img, sImageManager._Shark_img[(int)Dir_ID.RIGHT]);
+            else
+                sImageManager.Change_Image(_Img, sImageManager._Shark_img[(int)Dir_ID.LEFT]);
+        }
+
+        _Keep_diff = diff;
+        _Keep_sin = current_sin;
     }
 
     /// <summary>
@@ -189,18 +335,17 @@ public class Obj_Cave_Dive : MonoBehaviour
                 sGameManager.Delete_Obj(collision.gameObject);
                 break;
             }
-            case Obj_ID.SPIKE:
-            {
-                //ゲームオーバー
-                gNOW_GAMESTATE = GameState.GAMEOVER;
-                break;
-            }
             case Obj_ID.SHARK:
             {
                 //空気ゲージを減少
                 sGameManager.Dec_AirGage_Timer(10);
                 break;
             }
+            case Obj_ID.GOAL:
+                {
+                    sGameManager._GoalMoveState = GoalMoveState.PLAYER_IN;
+                    break;
+                }
         }
     }
 
@@ -219,26 +364,62 @@ public class Obj_Cave_Dive : MonoBehaviour
 
         switch (collision_obj_id)
         {
+            //岩
             case Obj_ID.ROCK:
             {
-                //ぶつかった面の法線(プレイヤーを押し返す方向)
-                Vector2 normal = collision.contacts[0].normal;
-
-                //速度リセット
-                _Rigid2D.velocity = Vector2.zero;
-
-                //法線方向にノックバック
-                _Rigid2D.velocity = normal * sGamePreference._Player_KnockBackSpeed;
+                //ノックバック処理
+                KnockBack(collision);
 
                 if (_PlayerState == Player_State.PLAY)
                 {
                     //空気ゲージを減少
                     sGameManager.Dec_AirGage_Timer(5);
-                    _PlayerState = Player_State.NO_OPERATION;
+                    _PlayerState = Player_State.NO_OPERATION; //操作不可にする
                 }
                 break;
             }
+            //機雷
+            case Obj_ID.MINE:
+            {
+                //ゲームオーバー
+                gNOW_GAMESTATE = GameState.GAMEOVER;
+                break;
+            }
+            //サメ
+            case Obj_ID.SHARK:
+            {
+                //空気ゲージを減少
+                sGameManager.Dec_AirGage_Timer(10);
+                break;
+            }
+            //ゴールを塞ぐ障害物
+            case Obj_ID.OBSTACLE:
+            {
+                //ノックバック処理
+                KnockBack(collision);
+                
+                if (_PlayerState == Player_State.PLAY)
+                    _PlayerState = Player_State.NO_OPERATION; //操作不可にする
+
+                break;
+            }
         }
+    }
+
+    /// <summary>
+    /// ノックバック処理
+    /// </summary>
+    /// <param name="collision">衝突情報をまとめた Collision2D 型</param>
+    private void KnockBack(Collision2D collision)
+    {
+        //ぶつかった面の法線(プレイヤーを押し返す方向)
+        Vector2 normal = collision.contacts[0].normal;
+
+        //速度リセット
+        _Rigid2D.velocity = Vector2.zero;
+
+        //法線方向にノックバック
+        _Rigid2D.velocity = normal * sGamePreference._Player_KnockBackSpeed;
     }
 
     /// <summary>
@@ -260,4 +441,23 @@ public class Obj_Cave_Dive : MonoBehaviour
         //どのキーとも一致しない場合、NONEを返す（未識別の意味）
         return Obj_ID.NONE;
     }
+
+    /// <summary>
+    /// オブジェクトの画面外判定
+    /// </summary>
+    /// <param name="target_obj">ゲームオブジェクト</param>
+    /// <returns></returns>
+    private bool Out_Screen(GameObject target_obj)
+    {
+        //targetUI（RectTransform）のワールド座標をカメラのビューポート座標に変換
+        //ビューポート座標は (0,0) が画面左下、(1,1) が画面右上を示す
+        Vector3 viewport_pos = sGameManager._Camera.WorldToViewportPoint(target_obj.transform.position);
+
+        //ビューポート座標が 0～1 の範囲外であれば、画面外にあると判定
+        if (viewport_pos.x < 0 || viewport_pos.x > 1 || viewport_pos.y < 0 || viewport_pos.y > 1)
+            return true;    //画面外
+        else
+            return false;   //画面内
+    }
+
 }

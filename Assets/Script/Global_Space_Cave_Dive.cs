@@ -18,9 +18,11 @@ namespace Common_Cave_Dive
         {
             { "PLAYER"      , Obj_ID.PLAYER },
             { "TREASURE"    , Obj_ID.TREASURE },
-            { "SPIKE"       , Obj_ID.SPIKE },
+            { "MINE"       , Obj_ID.MINE },
             { "SHARK"       , Obj_ID.SHARK },
-            { "ROCK"       , Obj_ID.ROCK },
+            { "ROCK"        , Obj_ID.ROCK },
+            { "GOAL"        , Obj_ID.GOAL },
+            { "OBSTACLE"    , Obj_ID.OBSTACLE },
         };
 
         /// <summary>
@@ -40,7 +42,6 @@ namespace Common_Cave_Dive
             INVISIBLE,      //非表示
             DISPLAY,        //表示
             PLAYER_IN,      //プレイヤーが入った
-            PLAYER_UP,      //プレイヤーが上昇
             END,
         }
 
@@ -49,9 +50,12 @@ namespace Common_Cave_Dive
             NONE,
             PLAYER,     //プレイヤー
             TREASURE,   //財宝
-            SPIKE,      //機雷
+            MINE,      //機雷
             SHARK,      //サメ
-            ROCK,
+            GOAL_ARROW, //ゴール矢印
+            GOAL,       //ゴール
+            ROCK,       //岩
+            OBSTACLE,   //障害物
         }
 
         public enum Rock_ID
@@ -99,6 +103,15 @@ namespace Common_Cave_Dive
             TAP,            //タップ時
             PLAYER_MOVE,    //プレイヤー移動時
         }
+
+        public enum Dir_ID
+        {
+            RIGHT,
+            LEFT,
+            UP,
+            DOWN,
+        }
+
     }
 
     public static class GrovalStruct_CaveDive
