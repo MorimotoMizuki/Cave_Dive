@@ -43,7 +43,6 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
     //財宝オブジェクトのリスト
     private List<GameObject> _Treasure_List = new List<GameObject>();
-    //ゴール矢印オブジェクトのリスト
 
     //タイマー関係
     private float _Limit_time;   //制限時間

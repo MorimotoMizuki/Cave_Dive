@@ -240,31 +240,14 @@ public class Obj_Cave_Dive : MonoBehaviour
     /// </summary>
     private void Player_Animation()
     {
-        //ベクトルの角度(ラジアン)を度に変換
-        float angle = Mathf.Atan2(_Dir.y, _Dir.x) * Mathf.Rad2Deg;
-        if (angle < 0) angle += 360f;
+        //プレイヤーの角度を取得 : 0～360度
+        float angle = transform.eulerAngles.z;
 
-        string direction = "";
+        // 0が上　反時計回りに値が増える
 
-        if (angle >= 75f && angle <= 105f)
-        {
-            direction = "上";
-        }
-        else if (angle >= 255f && angle <= 285f)
-        {
-            direction = "下";
-        }
-        else if (angle >= 105f && angle <= 255f)
-        {
-            direction = "左";
-        }
-        else
-        {
-            // 右（角度が 285° 以上 360°以下 または 0° 以上 75°以下）
-            direction = "右";
-        }
 
-        Debug.Log($"Direction: {direction}__{angle}");
+
+        Debug.Log(angle);
     }
 
     /// <summary>
