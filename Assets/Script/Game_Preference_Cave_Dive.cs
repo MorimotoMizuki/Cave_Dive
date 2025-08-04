@@ -53,6 +53,10 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     [Header("下方向の速度(浮力) : 1.0が通常時")]
     public float _Downward_SpeedModifier = 0.7f;
 
+    //プレイヤーのアニメーション切り替えフレーム数
+    [HideInInspector]
+    public int _Player_Anim_Cnt = 5;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -71,5 +75,12 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
 
         //60fpsに設定
         Application.targetFrameRate = 60;
+
+        //60fps以上 : 5フレームごと
+        if(Application.targetFrameRate >= 60)
+            _Player_Anim_Cnt = 5;
+        //60fps未満 : 3フレームごと
+        else
+            _Player_Anim_Cnt = 3;
     }
 }

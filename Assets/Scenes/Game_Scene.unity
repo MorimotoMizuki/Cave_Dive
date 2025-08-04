@@ -258,13 +258,9 @@ MonoBehaviour:
   - StageNum: 1
     Chara_Data:
     - Obj_ID: 1
-      pos: {x: -200, y: 200}
+      pos: {x: -200, y: 300}
     - Obj_ID: 2
       pos: {x: 200, y: -300}
-    - Obj_ID: 3
-      pos: {x: 100, y: -300}
-    - Obj_ID: 4
-      pos: {x: 100, y: -200}
     - Obj_ID: 5
       pos: {x: -150, y: 340}
   _Judge_Screen_Latency: 1
@@ -273,7 +269,7 @@ MonoBehaviour:
   _Player__Invincible_Frame: 30
   _Player_MoveSpeed: 3
   _Player_RotSpeed: 200
-  _Player_KnockBackSpeed: 3
+  _Player_KnockBackSpeed: 0.6
   _Mine_MoveSpeed: 1
   _Mine_Amplitude: 1
   _Shark_MoveSpeed: 1
@@ -302,10 +298,10 @@ MonoBehaviour:
   - {fileID: 1877194007921079243, guid: 018e9ccba7041c14497df393185fb76c, type: 3}
   _Rock_prefab:
   - {fileID: 3674211555421954294, guid: 7d0ba28d244d7bc48b17214aa13182ad, type: 3}
-  - {fileID: 6050707328629861229, guid: 7f4dd49f21a1d5247a96cc20d8e119d4, type: 3}
   - {fileID: 8869157777771792355, guid: 0d6c3bf0a3271b84391e1bd8e7378536, type: 3}
-  - {fileID: 3440195764984702417, guid: bdc649c5f95420f4195b9764596dc40b, type: 3}
+  - {fileID: 6050707328629861229, guid: 7f4dd49f21a1d5247a96cc20d8e119d4, type: 3}
   - {fileID: 6177524721292436444, guid: f2880f37ad2d8f245ab83ae7e1d23e43, type: 3}
+  - {fileID: 3440195764984702417, guid: bdc649c5f95420f4195b9764596dc40b, type: 3}
   _Obj_area: {fileID: 521833542}
   _Rock_area: {fileID: 1102663045}
   _Goal_obj: {fileID: 1381160362}
@@ -994,9 +990,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.35817707
+    x: 0.34601426
     y: 0
-    width: 0.2836459
+    width: 0.30797145
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -3358,20 +3354,23 @@ MonoBehaviour:
   _Mine_img: {fileID: 21300000, guid: f98e5cc1522562e4b82d3433ce7e17a6, type: 3}
   _Treasure_img: {fileID: 21300000, guid: ccc1810cc3b915e4c87b41191b0c1808, type: 3}
   _GoalArrow_img: {fileID: 21300000, guid: 59ba85a1710430b42aeb7fca0562822b, type: 3}
-  _Player_img:
+  _Player_Right_img:
   - {fileID: 21300000, guid: 3b397c34fd8356f48ac6623229201ec9, type: 3}
   - {fileID: 21300000, guid: 2a9962da48cd6a043a38e40ddf5109ee, type: 3}
   - {fileID: 21300000, guid: 904052f25f1f4d440b35f4ed304f686d, type: 3}
+  _Player_Left_img:
   - {fileID: 21300000, guid: 07933585152116b469c93677175754f2, type: 3}
   - {fileID: 21300000, guid: 2f23cc88f67dce841925fb4d23b291f4, type: 3}
   - {fileID: 21300000, guid: 736854e083763f944844ba7428e7f245, type: 3}
+  _Player_Up_img:
   - {fileID: 21300000, guid: 909978b20c5f27946b161cba52cc2ee9, type: 3}
   - {fileID: 21300000, guid: 46539238e4ff7fa4b955187069b51d47, type: 3}
   - {fileID: 21300000, guid: 4aafd36c2a8342446b654158067e1e7f, type: 3}
+  _Player_Down_img:
   - {fileID: 21300000, guid: 30f044c17794caf4887c8da9f058c5ae, type: 3}
   - {fileID: 21300000, guid: 1bc7b0e2bcbb0a74aa92bce4e7d3d046, type: 3}
   - {fileID: 21300000, guid: f34935271562fd04f86327b490ce19eb, type: 3}
-  - {fileID: 21300000, guid: db1489e2684aca6499b687868ebeb435, type: 3}
+  _Player_Front_img: {fileID: 21300000, guid: db1489e2684aca6499b687868ebeb435, type: 3}
 --- !u!1 &2124940314
 GameObject:
   m_ObjectHideFlags: 0

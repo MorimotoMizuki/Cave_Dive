@@ -12,11 +12,14 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
 
     //クリックフラグ
     //[HideInInspector] public bool _Is_Touch_or_Click_down;   //クリックまたはタッチが開始された瞬間
-    //[HideInInspector] public bool _Is_Touch_or_Click_up;     //クリックまたはタッチが終了した瞬間
+    [HideInInspector] public bool _Is_Touch_or_Click_up;     //クリックまたはタッチが終了した瞬間
 
     //クリック中または画面に触れている状態
     [HideInInspector] 
     public bool _Is_Touch_or_Click = false;
+
+    //プレイヤーがタッチ座標に近づいたフラグ
+    private bool _Is_Player_Near = false;
 
     // Start is called before the first frame update
     void Start()
@@ -29,8 +32,6 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
     {
         ////クリックまたはタッチが開始された瞬間（押し始め）を検出する
         //_Is_Touch_or_Click_down = Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
-        ////クリックまたはタッチが終了した瞬間（離した）を検出する
-        //_Is_Touch_or_Click_up = Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended);
 
         switch(gNOW_SCREEN_ID)
         {
@@ -39,6 +40,18 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
                     //ゲームプレイ中以外は終了
                     if (gNOW_GAMESTATE != GameState.PLAYING)
                         break;
+
+                    if(_Is_Player_Near)
+                    {
+                        //クリックまたはタッチが終了した瞬間（離した）を検出する
+                        _Is_Touch_or_Click_up = Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended);
+
+                        //手を離していない場合は終了
+                        if (!_Is_Touch_or_Click_up)
+                            return;
+                        else
+                            _Is_Player_Near = false;
+                    }
 
                     //クリック中または画面に触れている状態を検出する（押している間ずっと true）
                     _Is_Touch_or_Click = Input.GetMouseButton(0) || (Input.touchCount > 0);
@@ -65,6 +78,15 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
             return Input.GetTouch(0).position;
         else
             return Input.mousePosition;
+    }
+
+    /// <summary>
+    /// プレイヤーがタッチ座標が一定距離になった場合の処理
+    /// </summary>
+    public void Player_Near()
+    {
+        _Is_Player_Near = true;
+        _Is_Touch_or_Click = false;
     }
 
     /// <summary>

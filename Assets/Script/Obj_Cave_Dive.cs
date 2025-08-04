@@ -13,6 +13,7 @@ public class Obj_Cave_Dive : MonoBehaviour
     private Image _Img;             //画像情報
     private Rigidbody2D _Rigid2D;   //Rigidbody2D情報
     private Collider2D _Collider2D; //Collider2D情報
+    private RectTransform _Rect;    //RectTransform情報
 
     [Header("オブジェクトID")]
     [SerializeField] private Obj_ID _Obj_ID = Obj_ID.NONE;
@@ -20,6 +21,12 @@ public class Obj_Cave_Dive : MonoBehaviour
     #endregion ------------------------------------------------------------------------------------------------------------
 
     Transform _PlayerArrow;
+
+    Dir_ID _PlayerDir = Dir_ID.NONE;
+
+    private int _Anim_index = 0;
+    private int _Anim_cnt = 0;
+    private bool _isFront = false;
 
     //初期座標
     private Vector3 _Start_pos;
@@ -52,6 +59,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         //オブジェクトの各情報を取得
         _Img = GetComponent<Image>();
         _Rigid2D = GetComponent<Rigidbody2D>();
+        _Rect = GetComponent<RectTransform>();
 
         //初期座標設定
         _Start_pos = transform.position;
@@ -68,8 +76,10 @@ public class Obj_Cave_Dive : MonoBehaviour
             //プレイヤー
             case Obj_ID.PLAYER:
             {
-                //プレイヤーのアニメーション処理
-                Player_Animation();
+                //プレイヤーの角度変更
+                Player_Angle_Change();
+                //プレイヤーのアニメーション変更処理
+                Player_Animation(_Img);
 
                 switch (sGameManager._GoalMoveState)
                 {
@@ -158,12 +168,18 @@ public class Obj_Cave_Dive : MonoBehaviour
             case Obj_ID.PLAYER:
                 {
                     //画像設定
-                    sImageManager.Change_Image(_Img, sImageManager._Player_img[0]);
+                    sImageManager.Change_Image(_Img, sImageManager._Player_Right_img[0]);
                     //摩擦で徐々に減速
                     _Rigid2D.drag = sGamePreference._Water_Drag;
 
+                    //プレイヤーの子オブジェクトのRectTransform情報を取得
+                    _Rect = transform.GetChild(0).GetComponent<RectTransform>();
+                    _Img = transform.GetChild(0).GetComponent<Image>();
+
                     //プレイヤーの子オブジェクトの情報を取得
-                    _PlayerArrow = transform.GetChild(0);
+                    _PlayerArrow = transform.GetChild(1);
+
+                    transform.eulerAngles = new Vector3(0, 0, 270);
                     break;
                 }
             case Obj_ID.TREASURE:
@@ -216,17 +232,42 @@ public class Obj_Cave_Dive : MonoBehaviour
         //タッチしている座標の取得
         Vector3 tap_pos = sClickManager.GetInputPosition();
         tap_pos = sGameManager._Camera.ScreenToWorldPoint(tap_pos);
-        tap_pos.z = 0.0f;
+        //プレイヤーのZ座標に合わせる
+        tap_pos.z = transform.position.z;
 
         //タッチ座標からプレイヤーまでの方向を計算
         _Dir = tap_pos - transform.position;
         _Dir = _Dir.normalized; //正規化
 
-        // 回転を滑らかに合わせる
+        //プレイヤーとタッチ座標の距離を計算
+        float distance = Vector3.Distance(tap_pos, transform.position);
+
+        //距離が0.1以下の場合は処理終了
+        if (distance < 0.1f)
+        {
+            sClickManager.Player_Near();
+            return;
+        }
+
+        //目的の角度と現在の角度
         float target_angle = Mathf.Atan2(_Dir.y, _Dir.x) * Mathf.Rad2Deg - 90f;
         float current_angle = transform.eulerAngles.z;
-        float angle = Mathf.MoveTowardsAngle(current_angle, target_angle, sGamePreference._Player_RotSpeed * Time.deltaTime);
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        // 角度差を取得
+        float angle_diff = Mathf.DeltaAngle(current_angle, target_angle);
+
+        // 角度差が閾値以下なら滑らかに補間
+        if (Mathf.Abs(angle_diff) < 90f)
+        {
+            float angle = Mathf.MoveTowardsAngle(current_angle, target_angle, sGamePreference._Player_RotSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+        else
+        {
+            // 角度差が大きいなら即ターン
+            transform.rotation = Quaternion.Euler(0f, 0f, target_angle);
+            _isFront = true;
+        }
 
         // 浮力で速度補正
         float speed_modifier = 1f;
@@ -236,18 +277,109 @@ public class Obj_Cave_Dive : MonoBehaviour
     }
 
     /// <summary>
-    /// プレイヤーのアニメーション処理
+    /// プレイヤーアニメーション画像切り替え
     /// </summary>
-    private void Player_Animation()
+    /// <param name="target_img">Imageの情報</param>
+    /// <param name="change_img">ループさせる画像配列</param>
+    private void Player_Animation(Image target_img)
+    {
+        if (!_isFront && _Anim_cnt < sGamePreference._Player_Anim_Cnt)
+        {
+            _Anim_cnt++;
+            return;
+        }
+
+        //角度調整用
+        float add_angle = 0.0f;
+
+        if (_isFront)
+        {
+            sImageManager.Change_Image(_Img, sImageManager._Player_Front_img);  //画像変更
+            //角度調整
+            switch(_PlayerDir)
+            {
+                case Dir_ID.UP:
+                case Dir_ID.DOWN:
+                    add_angle = 0.0f;
+                    break;
+                case Dir_ID.RIGHT:
+                    add_angle = 90.0f;
+                    break;
+                case Dir_ID.LEFT:
+                    add_angle = 270.0f;
+                    break;
+            }
+            _Rect.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + add_angle);
+
+            _isFront = false;
+            _Anim_cnt = 0;
+            return;
+        }
+
+        //一定間隔未満は終了
+        if (_Anim_cnt < sGamePreference._Player_Anim_Cnt) 
+            return;
+
+        switch (_PlayerDir)
+        {
+            case Dir_ID.UP:
+                sImageManager.Change_Image(target_img, sImageManager._Player_Up_img[PLAYER_ANIM_LOOP[_Anim_index]]);    //画像変更
+                add_angle = 0.0f;
+                break;
+            case Dir_ID.DOWN:
+                sImageManager.Change_Image(target_img, sImageManager._Player_Down_img[PLAYER_ANIM_LOOP[_Anim_index]]);  //画像変更
+                add_angle = 180.0f;
+                break;
+            case Dir_ID.RIGHT:
+                sImageManager.Change_Image(target_img, sImageManager._Player_Right_img[PLAYER_ANIM_LOOP[_Anim_index]]); //画像変更
+                add_angle = 90.0f;
+                break;
+            case Dir_ID.LEFT:
+                sImageManager.Change_Image(target_img, sImageManager._Player_Left_img[PLAYER_ANIM_LOOP[_Anim_index]]);  //画像変更
+                add_angle = -90.0f;
+                break;
+        }
+
+        //角度調整
+        _Rect.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + add_angle);
+
+        //インデクス設定
+        if (_Anim_index < 3)
+            _Anim_index++;
+        else
+            _Anim_index = 0;
+
+        _Anim_cnt = 0;
+    }
+
+    /// <summary>
+    /// プレイヤーの角度ID変更処理
+    /// </summary>
+    private void Player_Angle_Change()
     {
         //プレイヤーの角度を取得 : 0～360度
         float angle = transform.eulerAngles.z;
 
-        // 0が上　反時計回りに値が増える
-
-
-
-        Debug.Log(angle);
+        //上
+        if ((angle >= 345f && angle < 360f) || (angle >= 0f && angle < 15f))
+        {
+            _PlayerDir = Dir_ID.UP;
+        }
+        //左
+        else if (angle >= 15f && angle < 165f)
+        {
+            _PlayerDir = Dir_ID.LEFT;
+        }
+        //下
+        else if (angle >= 165f && angle < 195f)
+        {
+            _PlayerDir = Dir_ID.DOWN;
+        }
+        //右
+        else if (angle >= 195f && angle < 345f)
+        {
+            _PlayerDir = Dir_ID.RIGHT;
+        }
     }
 
     /// <summary>

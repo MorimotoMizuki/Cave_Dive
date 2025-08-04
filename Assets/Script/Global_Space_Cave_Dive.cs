@@ -12,6 +12,8 @@ namespace Common_Cave_Dive
     /// </summary>
     public static class GrovalConst_CaveDive
     {
+        public static int[] PLAYER_ANIM_LOOP = new int[4]{ 0, 1, 0, 2 };
+
         //オブジェクト識別辞書
         public static readonly Dictionary<string, Obj_ID> Name_to_Obj_ID
         = new Dictionary<string, Obj_ID>
@@ -62,10 +64,10 @@ namespace Common_Cave_Dive
         {
             NONE,
             SQUARE,                 //四角
-            RIGHTUP_TRIANGLE,       //右上三角
             LEFTUP_TRIANGLE,        //左上三角
-            RIGHTDOWN_TRIANGLE,     //右下三角
+            RIGHTUP_TRIANGLE,       //右上三角
             LEFTDOWN_TRIANGLE,      //左下三角
+            RIGHTDOWN_TRIANGLE,     //右下三角
         }
 
         /// <summary>
@@ -110,6 +112,8 @@ namespace Common_Cave_Dive
             LEFT,
             UP,
             DOWN,
+            FRONT,
+            NONE,
         }
 
     }

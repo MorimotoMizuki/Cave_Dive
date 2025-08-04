@@ -26,7 +26,11 @@ public class Image_Manager_Cave_Dive : MonoBehaviour
     public Sprite _GoalArrow_img;
 
     [Header("プレイヤーの画像")]
-    public Sprite[] _Player_img;
+    public Sprite[] _Player_Right_img;
+    public Sprite[] _Player_Left_img;
+    public Sprite[] _Player_Up_img;
+    public Sprite[] _Player_Down_img;
+    public Sprite _Player_Front_img;
 
     /// <summary>
     /// オブジェクトの表示切り替え
