@@ -70,6 +70,14 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
                         {
                             display_id = Screen_ID.GAME;
                             invisible_id = Screen_ID.CLEAR;
+
+                            string index = $"stage{gNOW_STAGE_LEVEL + 1}";
+                            //マップデータにステージデータがあるかチェック
+                            if (sCsvRoader._RockMapData.ContainsKey(index))
+                                gNOW_STAGE_LEVEL++;             //ステージレベルアップ
+                            else
+                                display_id = Screen_ID.TITLE; //タイトル画面へ
+
                             break;
                         }
                     case Button_ID.REPLAY:

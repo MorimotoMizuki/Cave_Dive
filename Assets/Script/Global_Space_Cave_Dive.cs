@@ -112,10 +112,27 @@ namespace Common_Cave_Dive
             LEFT,
             UP,
             DOWN,
-            FRONT,
             NONE,
         }
 
+        /// <summary>
+        /// プレイヤーの状態
+        /// </summary>
+        public enum Player_State
+        {
+            PLAY,           //通常
+            NO_OPERATION,   //操作不可
+        }
+
+        /// <summary>
+        /// 機雷の状態
+        /// </summary>
+        public enum Mine_State
+        {
+            READY,      //待機
+            EXPLOSION,  //爆発
+            DELETE,     //削除
+        }
     }
 
     public static class GrovalStruct_CaveDive
@@ -153,7 +170,7 @@ namespace Common_Cave_Dive
         public static GameState gNOW_GAMESTATE = GameState.READY;
 
         //現在のステージレベル
-        public static int gNOW_STAGE_LEVEL = 1;
+        public static int gNOW_STAGE_LEVEL = 2;
 
         //各スクリプト
         public static Game_Manager_Cave_Dive    sGameManager;

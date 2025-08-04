@@ -262,7 +262,15 @@ MonoBehaviour:
     - Obj_ID: 2
       pos: {x: 200, y: -300}
     - Obj_ID: 5
-      pos: {x: -150, y: 340}
+      pos: {x: -200, y: 340}
+  - StageNum: 2
+    Chara_Data:
+    - Obj_ID: 1
+      pos: {x: -100, y: 300}
+    - Obj_ID: 2
+      pos: {x: 200, y: -300}
+    - Obj_ID: 5
+      pos: {x: -200, y: 340}
   _Judge_Screen_Latency: 1
   _Max_Mask_Alpha: 0.8
   _Min_Mask_Alpha: 0.2
@@ -275,7 +283,8 @@ MonoBehaviour:
   _Shark_MoveSpeed: 1
   _Shark_Amplitude: 1
   _Water_Drag: 2
-  _Downward_SpeedModifier: 0.6
+  _Downward_SpeedModifier: 0.5
+  _Player_Anim_Cnt: 5
 --- !u!114 &118350172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,6 +317,7 @@ MonoBehaviour:
   _Obstacle_obj: {fileID: 403383564}
   _Camera: {fileID: 519420031}
   _GoalMoveState: 0
+  _MineState: 0
 --- !u!1 &141972212
 GameObject:
   m_ObjectHideFlags: 0
@@ -990,9 +1000,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.34601426
+    x: 0.35423037
     y: 0
-    width: 0.30797145
+    width: 0.29153925
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -3105,6 +3115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Is_Button: 
+  _Is_Touch_or_Click_up: 0
   _Is_Touch_or_Click: 0
 --- !u!1 &1795775443
 GameObject:
@@ -3341,6 +3352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _BackGround_img:
   - {fileID: 21300000, guid: 8ee580f2fbaae0246bd193e66d039e68, type: 3}
+  - {fileID: 21300000, guid: 0b823f2898d51dd4dbf5a5fff99ed480, type: 3}
   _BackGround_obj:
   - {fileID: 928075807}
   - {fileID: 846842765}
@@ -3352,6 +3364,14 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d0a20d6361be8664ab40efcbd31c03f0, type: 3}
   - {fileID: 21300000, guid: cff0d9ffb8530e94dab3ddaf2426b3f0, type: 3}
   _Mine_img: {fileID: 21300000, guid: f98e5cc1522562e4b82d3433ce7e17a6, type: 3}
+  _Mine_Anim_img:
+  - {fileID: 21300000, guid: 735b57b5bbee66646971dc7d7ebec68b, type: 3}
+  - {fileID: 21300000, guid: 016c8dd84cac16c4abd8b08df44cc54b, type: 3}
+  - {fileID: 21300000, guid: 97f843c5827505b4695019ed5cad9e72, type: 3}
+  - {fileID: 21300000, guid: c1000f5861f8708449a14a9c3e4d0101, type: 3}
+  - {fileID: 21300000, guid: 67eaf2e8983fb274b80c26956b1a7c5a, type: 3}
+  - {fileID: 21300000, guid: 0008f0a9d3cc96440aad910279986c59, type: 3}
+  - {fileID: 21300000, guid: f4bd2a877540b2c478f7d9c6842ce9bb, type: 3}
   _Treasure_img: {fileID: 21300000, guid: ccc1810cc3b915e4c87b41191b0c1808, type: 3}
   _GoalArrow_img: {fileID: 21300000, guid: 59ba85a1710430b42aeb7fca0562822b, type: 3}
   _Player_Right_img:

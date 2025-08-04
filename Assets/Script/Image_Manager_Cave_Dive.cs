@@ -17,8 +17,10 @@ public class Image_Manager_Cave_Dive : MonoBehaviour
 
     [Header("サメの画像 (左右の順番でお願いします)")]
     public Sprite[] _Shark_img;
-    [Header("機雷の画像")]
+    [Header("機雷の画像、機雷の爆発アニメーション画像")]
     public Sprite _Mine_img;
+    public Sprite[] _Mine_Anim_img;
+
     [Header("財宝の画像")]
     public Sprite _Treasure_img;
 
