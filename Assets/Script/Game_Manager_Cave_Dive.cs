@@ -156,7 +156,10 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
             }
         }
 
-        gNOW_GAMESTATE = GameState.PLAYING;
+        //カウントダウンスタート
+        StartCoroutine(Countdown());
+
+        gNOW_GAMESTATE = GameState.READY;
     }
 
     /// <summary>
@@ -218,12 +221,16 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                         _Treasure_List.Add(obj);
                         break;
                     }
+                    case Obj_ID.MINE:
+                    case Obj_ID.SHARK:
+                        {
+                            //機雷とサメに移動幅を設定
+                            obj.GetComponent<Obj_Cave_Dive>()._MoveRange = chara_data[i].move_range;
+                            break;
+                        }
                 }
             }
-            else
-                Debug.Log($"{chara_data[i].Obj_ID}はプレハブにありません");
         }
-
     }
 
     /// <summary>
@@ -258,8 +265,6 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         sImageManager.Change_Active(_Goal_obj, true);
         //障害物オブジェクト非表示
         sImageManager.Change_Active(_Obstacle_obj, false);
-
-        Debug.Log("ゴール開放");
     }
 
     /// <summary>
@@ -323,6 +328,51 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                     = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
 
         return false;
+    }
+
+    /// <summary>
+    /// カウントダウン
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator Countdown()
+    {
+        int cnt = 3;
+        //カウントダウンオブジェクト表示
+        sImageManager.Change_Active(sImageManager._Countdown_obj.gameObject, true);
+        //カウントダウン画像に変更
+        sImageManager.Change_Image(sImageManager._Countdown_obj, sImageManager._Countdown_img[cnt - 1]);
+        //SE再生
+        //sMusicManager.SE_Play_BGM_Stop(SE_ID.COUNTDOWN);
+
+        while (cnt > 0)
+        {
+            //カウントダウン画像変更
+            sImageManager.Change_Image(sImageManager._Countdown_obj, sImageManager._Countdown_img[cnt - 1]);
+            yield return StartCoroutine(WaitForFrames(60)); // 60フレーム待機
+            cnt--;
+        }
+        //スタート画像に変更
+        sImageManager.Change_Image(sImageManager._Countdown_obj, sImageManager._Start_img);
+        yield return StartCoroutine(WaitForFrames(60));     // 60フレーム待機
+
+        //カウントダウンオブジェクト非表示
+        sImageManager.Change_Active(sImageManager._Countdown_obj.gameObject, false);
+
+        //ゲームプレイ可
+        gNOW_GAMESTATE = GameState.PLAYING;
+    }
+
+    /// <summary>
+    /// 指定したフレーム数待機
+    /// </summary>
+    /// <param name="frame_cnt">フレーム数</param>
+    /// <returns></returns>
+    IEnumerator WaitForFrames(int frame_cnt)
+    {
+        for (int i = 0; i < frame_cnt; i++)
+        {
+            yield return null; // 1フレーム待機
+        }
     }
 
     /// <summary>

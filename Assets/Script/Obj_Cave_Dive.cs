@@ -38,6 +38,10 @@ public class Obj_Cave_Dive : MonoBehaviour
 
     #endregion ------------------------------------------------------------------------------------------------------------
 
+    //機雷とサメの移動幅
+    [HideInInspector]
+    public float _MoveRange;
+
     //初期座標
     private Vector3 _Start_pos;
     //移動幅保存用
@@ -415,8 +419,8 @@ public class Obj_Cave_Dive : MonoBehaviour
         {
             //Mathf.Sinはサイン波で -1～ 1 の値を返す
             _Dir.y = Mathf.Sin(Time.time * sGamePreference._Mine_MoveSpeed);
-            //返された値を (移動幅)_Mine_Amplitude で拡大する
-            _Dir.y *= sGamePreference._Mine_Amplitude;
+            //返された値を (移動幅)_MoveRange で拡大する
+            _Dir.y *= _MoveRange;
         }
 
         //X,Zはそのままで、Y だけ上下に移動させる
@@ -430,8 +434,8 @@ public class Obj_Cave_Dive : MonoBehaviour
     {
         //Mathf.Sinはサイン波で -1～ 1 の値を返す
         float current_sin = Mathf.Sin(Time.time * sGamePreference._Shark_MoveSpeed);
-        //返された値を (移動幅)_Shark_Amplitude で拡大する
-        float new_x = current_sin * sGamePreference._Shark_Amplitude;
+        //返された値を (移動幅)_MoveRange で拡大する
+        float new_x = current_sin * _MoveRange;
 
         //Y,Zはそのままで、X だけ上下に移動させる
         transform.position = new Vector3(_Start_pos.x + new_x, _Start_pos.y, _Start_pos.z);
@@ -521,7 +525,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 if (_PlayerState == Player_State.PLAY)
                 {
                     //空気ゲージを減少
-                    sGameManager.Dec_AirGage_Timer(5);
+                    sGameManager.Dec_AirGage_Timer(sGamePreference._Rock_DecAirGage);
                     _PlayerState = Player_State.NO_OPERATION; //操作不可にする
                 }
                 break;
@@ -542,7 +546,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 if (_PlayerState == Player_State.PLAY)
                 {
                     //空気ゲージを減少
-                    sGameManager.Dec_AirGage_Timer(10);
+                    sGameManager.Dec_AirGage_Timer(sGamePreference._Shark_DecAirGage);
                     _PlayerState = Player_State.NO_OPERATION; //操作不可にする
                 }
                 break;

@@ -11,6 +11,13 @@ public class Image_Manager_Cave_Dive : MonoBehaviour
     public Sprite _Mask_img;
     public Image  _Mask_obj;
 
+    [Header("カウントダウン画像, 画像オブジェクト")]
+    public Sprite[] _Countdown_img;
+    public Image _Countdown_obj;
+
+    [Header("スタート画像")]
+    public Sprite _Start_img;
+
     [Header("空気ゲージ、ダメージゲージ画像オブジェクト")]
     public Image _AirGage_Fill;
     public Image _Damage_Gage_Fill;

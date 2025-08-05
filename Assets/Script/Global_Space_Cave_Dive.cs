@@ -104,6 +104,7 @@ namespace Common_Cave_Dive
             OVER,           //ゲームオーバー時
             TAP,            //タップ時
             PLAYER_MOVE,    //プレイヤー移動時
+            COUNTDOWN,      //カウントダウン
         }
 
         public enum Dir_ID
@@ -145,6 +146,10 @@ namespace Common_Cave_Dive
 
             //座標
             public Vector2 pos;
+
+            //オブジェクトIDが機雷とサメの場合のみ表示
+            [Tooltip("機雷とサメの移動幅")]
+            public float move_range;
         }
 
         [System.Serializable]

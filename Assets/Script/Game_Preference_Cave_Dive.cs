@@ -39,19 +39,19 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
 
     [Header("機雷の基本の移動速度")]
     public float _Mine_MoveSpeed = 1.0f;
-    [Header("機雷の上下運動の幅")]
-    public float _Mine_Amplitude = 1.0f;
 
     [Header("サメの基本の移動速度")]
     public float _Shark_MoveSpeed = 1.0f;
-    [Header("サメの左右運動の幅")]
-    public float _Shark_Amplitude = 1.0f;
 
     [Header("水中での摩擦・抵抗の強さ")]
     public float _Water_Drag = 2.0f;
 
     [Header("下方向の速度(浮力) : 1.0が通常時")]
     public float _Downward_SpeedModifier = 0.7f;
+
+    [Header("空気ゲージが減少する量(秒)")]
+    public float _Rock_DecAirGage = 5.0f;
+    public float _Shark_DecAirGage = 10.0f;
 
     //プレイヤーのアニメーション切り替えフレーム数
     [HideInInspector]
