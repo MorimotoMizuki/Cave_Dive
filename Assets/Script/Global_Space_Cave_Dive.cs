@@ -102,10 +102,14 @@ namespace Common_Cave_Dive
         public enum SE_ID
         {
             CLEAR,          //クリア時
-            OVER,           //ゲームオーバー時
+            TIMEOVER,       //タイムオーバー時
             TAP,            //タップ時
-            PLAYER_MOVE,    //プレイヤー移動時
+            ROCK_HIT,       //岩に衝突時
+            EXPLOSION,      //機雷爆発時
+            SHARK_HIT,      //サメ衝突時
             COUNTDOWN,      //カウントダウン
+            TREASURE_GET,   //財宝獲得時
+            GOAL_IN,        //ゴールに入った時
         }
 
         public enum Dir_ID
@@ -178,7 +182,7 @@ namespace Common_Cave_Dive
         public static GameState gNOW_GAMESTATE = GameState.READY;
 
         //現在のステージレベル
-        public static int gNOW_STAGE_LEVEL = 5;
+        public static int gNOW_STAGE_LEVEL = 1;
 
         //各スクリプト
         public static Game_Manager_Cave_Dive    sGameManager;

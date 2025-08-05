@@ -34,6 +34,8 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
 
         //タイトル画面を表示
         _Screen_obj[(int)Screen_ID.TITLE].gameObject.SetActive(true);
+        //BGM再生
+        sMusicManager.BGM_Change(BGM_ID.TITLE);
     }
 
     // Update is called once per frame
@@ -156,7 +158,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             case Screen_ID.TITLE:
                 {
                     //BGMを再生
-                    //GrovalNum_CaveDive.sMusicManager.BGM_Change(GrovalConst_CaveDive.BGM_ID.TITLE);
+                    sMusicManager.BGM_Change(BGM_ID.TITLE);
 
                     gNOW_GAMESTATE = GameState.READY;//待機フェーズ
                     gNOW_STAGE_LEVEL = 1; //ステージレベルを1にする
@@ -166,7 +168,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             case Screen_ID.GAME:
                 {
                     //BGMを再生
-                    //GrovalNum_CaveDive.sMusicManager.BGM_Change(GrovalConst_CaveDive.BGM_ID.GAME);
+                    sMusicManager.BGM_Change(BGM_ID.GAME);
 
                     sGameManager.Reset_Stage();  //ステージリセット                                                                 
                     gNOW_GAMESTATE = GameState.CREATE_STAGE; //ステージ生成フェーズへ
@@ -197,7 +199,7 @@ public class Screen_Change_Cave_Dive : MonoBehaviour
             //クリア画面
             case Screen_ID.CLEAR:
                 {
-                    //GrovalNum_CaveDive.sMusicManager.SE_Play_BGM_Stop(GrovalConst_CaveDive.SE_ID.CLEAR); //SE再生 : BGM停止
+                    sMusicManager.SE_Play_BGM_Stop(SE_ID.CLEAR); //SE再生 : BGM停止
 
                     gNOW_GAMESTATE = GameState.READY;//待機フェーズ
                     _JudgeState = Judge_State.READY;

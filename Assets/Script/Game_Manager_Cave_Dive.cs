@@ -320,6 +320,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
             //ゲームオーバー
             gNOW_GAMESTATE = GameState.GAMEOVER;
+            //SE再生
+            sMusicManager.SE_Play_BGM_Stop(SE_ID.TIMEOVER);
             //タイムオーバーした場合のプレイヤーの設定
             _Player_Data.TimeOver_Player_Setting();
             return true;
@@ -343,13 +345,13 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// <returns></returns>
     IEnumerator Countdown()
     {
-        int cnt = 3;
+        int cnt = sImageManager._Countdown_img.Length;
         //カウントダウンオブジェクト表示
         sImageManager.Change_Active(sImageManager._Countdown_obj.gameObject, true);
         //カウントダウン画像に変更
         sImageManager.Change_Image(sImageManager._Countdown_obj, sImageManager._Countdown_img[cnt - 1]);
         //SE再生
-        //sMusicManager.SE_Play_BGM_Stop(SE_ID.COUNTDOWN);
+        sMusicManager.SE_Play_BGM_Stop(SE_ID.COUNTDOWN);
 
         while (cnt > 0)
         {

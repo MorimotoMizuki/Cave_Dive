@@ -253,8 +253,8 @@ MonoBehaviour:
   screen_change: {fileID: 1373294664}
   image_manager: {fileID: 2115879507}
   csv_roader: {fileID: 800541848}
-  _AirGage_Time: 3c000000780000007800000078000000b4000000
-  _Player_Angle: 0000000000000000000000000000000003000000
+  _AirGage_Time: 3c000000780000007800000078000000dc000000
+  _Player_Angle: 0000000003000000030000000000000003000000
   _Stage_Chara_Data:
   - StageNum: 1
     Chara_Data:
@@ -1136,9 +1136,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.22818184
+    x: 0.30763888
     y: 0
-    width: 0.5436363
+    width: 0.38472223
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -2654,10 +2654,32 @@ MonoBehaviour:
   audio_source_bgm: {fileID: 1460669335}
   audio_source_se: {fileID: 1460669334}
   bgm_fade_time: 0.5
-  bgm_clip: []
-  bgm_volume: []
-  se_clip: []
-  se_volume: []
+  bgm_clip:
+  - {fileID: 8300000, guid: 837417a3af9a4f74991d5e2eb0223d7c, type: 3}
+  - {fileID: 8300000, guid: 1dbb353a1b1b8c048afba65e16f052ea, type: 3}
+  bgm_volume:
+  - 0.5
+  - 0.5
+  se_clip:
+  - {fileID: 8300000, guid: 699ec299a09525840a8e2d9b6bc148d4, type: 3}
+  - {fileID: 8300000, guid: 7ce952de2f785cd49961bcfe863e8eef, type: 3}
+  - {fileID: 8300000, guid: 664441ef9b8ad884fa4b4688e83ed0f8, type: 3}
+  - {fileID: 8300000, guid: df7bd4fd24286f04ca69242f5d2f08de, type: 3}
+  - {fileID: 8300000, guid: 0d7f088657571ba4cb05b23bf046fb57, type: 3}
+  - {fileID: 8300000, guid: aa5c327626109154485a36851072edba, type: 3}
+  - {fileID: 8300000, guid: d861e953a5e5a3740ad2ee5d787eb6af, type: 3}
+  - {fileID: 8300000, guid: d6f6128188c3b07429477b629171138f, type: 3}
+  - {fileID: 8300000, guid: 54ae78f433a5beb4cb69c76580a24907, type: 3}
+  se_volume:
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
 --- !u!82 &1460669334
 AudioSource:
   m_ObjectHideFlags: 0

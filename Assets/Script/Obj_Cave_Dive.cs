@@ -239,7 +239,9 @@ public class Obj_Cave_Dive : MonoBehaviour
 
                     //画面外処理
                     if (Out_Screen(gameObject))
+                    {
                         sGameManager._GoalMoveState = GoalMoveState.END;
+                    }
 
                     break;
                 }
@@ -558,16 +560,15 @@ public class Obj_Cave_Dive : MonoBehaviour
                     sGameManager.Dec_Mask_Alpha();
                     //財宝の削除
                     sGameManager.Delete_Obj(collision.gameObject);
-                    break;
-                }
-            case Obj_ID.SHARK:
-                {
-                    //空気ゲージを減少
-                    sGameManager.Dec_AirGage_Timer(10);
+                    sMusicManager.SE_Play(SE_ID.TREASURE_GET); //SE再生
                     break;
                 }
             case Obj_ID.GOAL:
                 {
+                    if (sGameManager._GoalMoveState != GoalMoveState.DISPLAY_READY)
+                        break;
+
+                    sMusicManager.SE_Play_BGM_Stop(SE_ID.GOAL_IN); //SE再生 : BGM停止
                     sGameManager._GoalMoveState = GoalMoveState.PLAYER_IN;
                     break;
                 }
@@ -595,10 +596,11 @@ public class Obj_Cave_Dive : MonoBehaviour
                     //ノックバック処理
                     KnockBack(collision, sGamePreference._Player_KnockBackSpeed);
 
-                    if (_PlayerState == Player_State.PLAY)
+                    if (_PlayerState == Player_State.PLAY && sGameManager._GoalMoveState != GoalMoveState.PLAYER_IN)
                     {
                         //空気ゲージを減少
                         sGameManager.Dec_AirGage_Timer(sGamePreference._Rock_DecAirGage);
+                        sMusicManager.SE_Play(SE_ID.ROCK_HIT); //SE再生
                         _PlayerState = Player_State.NO_OPERATION; //操作不可にする
                     }
                     break;
@@ -608,6 +610,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 {
                     //機雷爆発フェーズ
                     collision.transform.GetComponent<Obj_Cave_Dive>()._Obj_MineState = Mine_State.EXPLOSION;
+                    sMusicManager.SE_Play_BGM_Stop(SE_ID.EXPLOSION); //SE再生
                     //プレイヤー削除
                     sGameManager.Delete_Obj(gameObject);
                     break;
@@ -622,6 +625,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                     {
                         //空気ゲージを減少
                         sGameManager.Dec_AirGage_Timer(sGamePreference._Shark_DecAirGage);
+                        sMusicManager.SE_Play(SE_ID.SHARK_HIT); //SE再生
                         _PlayerState = Player_State.NO_OPERATION; //操作不可にする
                     }
                     break;

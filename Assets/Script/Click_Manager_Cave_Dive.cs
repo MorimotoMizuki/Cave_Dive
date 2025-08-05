@@ -11,7 +11,6 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
     public bool[] _Is_Button;
 
     //クリックフラグ
-    //[HideInInspector] public bool _Is_Touch_or_Click_down;   //クリックまたはタッチが開始された瞬間
     [HideInInspector] public bool _Is_Touch_or_Click_up;     //クリックまたはタッチが終了した瞬間
 
     //クリック中または画面に触れている状態
@@ -30,9 +29,6 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ////クリックまたはタッチが開始された瞬間（押し始め）を検出する
-        //_Is_Touch_or_Click_down = Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
-
         switch(gNOW_SCREEN_ID)
         {
             case Screen_ID.GAME:
@@ -107,24 +103,24 @@ public class Click_Manager_Cave_Dive : MonoBehaviour
     public void Button_Clicked_Start()
     {
         _Is_Button[(int)Button_ID.START] = true;     //ボタンフラグtrue
-        //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
+        sMusicManager.SE_Play(SE_ID.TAP); //SE再生
     }
     //ネクストボタン : クリア画面
     public void Button_Clicked_Next()
     {
         _Is_Button[(int)Button_ID.NEXT] = true;     //ボタンフラグtrue
-        //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
+        sMusicManager.SE_Play(SE_ID.TAP); //SE再生
     }
     //リプレイボタン : オーバー画面
     public void Button_Clicked_Replay()
     {
         _Is_Button[(int)Button_ID.REPLAY] = true;     //ボタンフラグtrue
-        //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
+        sMusicManager.SE_Play(SE_ID.TAP); //SE再生
     }
     //タイトルボタン : オーバー画面
     public void Button_Clicked_Title()
     {
         _Is_Button[(int)Button_ID.TITLE] = true;     //ボタンフラグtrue
-        //GrovalNum_CaveDive.sMusicManager.SE_Play(GrovalConst_CaveDive.SE_ID.TAP); //SE再生
+        sMusicManager.SE_Play(SE_ID.TAP); //SE再生
     }
 }
