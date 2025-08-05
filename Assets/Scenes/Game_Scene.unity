@@ -253,7 +253,7 @@ MonoBehaviour:
   screen_change: {fileID: 1373294664}
   image_manager: {fileID: 2115879507}
   csv_roader: {fileID: 800541848}
-  _AirGage_Time: 3c000000780000003c0000003c0000003c000000
+  _AirGage_Time: 3c0000007800000078000000780000003c000000
   _Stage_Chara_Data:
   - StageNum: 1
     Chara_Data:
@@ -317,6 +317,52 @@ MonoBehaviour:
       pos: {x: 20, y: -225}
       move_range: 1
       is_start_up_right: 0
+    - Obj_ID: 5
+      pos: {x: -100, y: 350}
+      move_range: 1
+      is_start_up_right: 0
+    - Obj_ID: 5
+      pos: {x: 180, y: 350}
+      move_range: 1
+      is_start_up_right: 0
+  - StageNum: 4
+    Chara_Data:
+    - Obj_ID: 1
+      pos: {x: -200, y: 360}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 2
+      pos: {x: -160, y: 40}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 2
+      pos: {x: 20, y: 180}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 2
+      pos: {x: 100, y: -225}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 5
+      pos: {x: -100, y: 350}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 3
+      pos: {x: -130, y: -165}
+      move_range: 1.4
+      is_start_up_right: 0
+    - Obj_ID: 3
+      pos: {x: 0, y: -27}
+      move_range: 0.8
+      is_start_up_right: 1
+    - Obj_ID: 3
+      pos: {x: -43, y: 240}
+      move_range: 0.8
+      is_start_up_right: 1
+    - Obj_ID: 3
+      pos: {x: 87, y: 240}
+      move_range: 0.8
+      is_start_up_right: 0
   _Judge_Screen_Latency: 1
   _Max_Mask_Alpha: 0.8
   _Min_Mask_Alpha: 0.2
@@ -363,7 +409,6 @@ MonoBehaviour:
   _Obstacle_obj: {fileID: 403383564}
   _Camera: {fileID: 519420031}
   _GoalMoveState: 0
-  _MineState: 0
 --- !u!1 &141972212
 GameObject:
   m_ObjectHideFlags: 0
@@ -929,6 +974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _Obj_ID: 8
   _MoveRange: 0
+  _IsStart_Up_Right: 1
 --- !u!50 &403383568
 Rigidbody2D:
   serializedVersion: 4
@@ -1047,9 +1093,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.25969696
+    x: 0.3093929
     y: 0
-    width: 0.48060608
+    width: 0.3812142
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -3476,6 +3522,9 @@ MonoBehaviour:
   _BackGround_img:
   - {fileID: 21300000, guid: 8ee580f2fbaae0246bd193e66d039e68, type: 3}
   - {fileID: 21300000, guid: 0b823f2898d51dd4dbf5a5fff99ed480, type: 3}
+  - {fileID: 21300000, guid: 7024b30d1b01ab245855e4f6734ae7e2, type: 3}
+  - {fileID: 21300000, guid: 1d02f964e389da9448bde467c6302fa2, type: 3}
+  - {fileID: 21300000, guid: 1d02f964e389da9448bde467c6302fa2, type: 3}
   _BackGround_obj:
   - {fileID: 928075807}
   - {fileID: 846842765}
@@ -3520,6 +3569,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1bc7b0e2bcbb0a74aa92bce4e7d3d046, type: 3}
   - {fileID: 21300000, guid: f34935271562fd04f86327b490ce19eb, type: 3}
   _Player_Front_img: {fileID: 21300000, guid: db1489e2684aca6499b687868ebeb435, type: 3}
+  _Player_Dead_img:
+  - {fileID: 21300000, guid: ebc1029c7a817794ab5e4cfd1ea79cf9, type: 3}
+  - {fileID: 21300000, guid: 406a97c54c916c94e91725276d125604, type: 3}
 --- !u!1 &2124940314
 GameObject:
   m_ObjectHideFlags: 0

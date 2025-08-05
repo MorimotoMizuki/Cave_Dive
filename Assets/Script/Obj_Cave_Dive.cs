@@ -22,12 +22,12 @@ public class Obj_Cave_Dive : MonoBehaviour
 
     #region プレイヤー ----------------------------------------------------------------------------------------------------
 
+    //プレイヤーの状態
     private Player_State _PlayerState = Player_State.PLAY;
-
     //プレイヤーの無敵時間用
     private int _Invincible_cnt = 0;
     //プレイヤーの矢印オブジェクト
-    Transform _PlayerArrow;
+    private Transform _PlayerArrow;
     //向いている角度
     Dir_ID _PlayerDir = Dir_ID.NONE;
     //アニメーション用
@@ -37,6 +37,9 @@ public class Obj_Cave_Dive : MonoBehaviour
     private bool _isFront = false;
 
     #endregion ------------------------------------------------------------------------------------------------------------
+
+    //機雷オブジェクトの機雷の状態管理用
+    private Mine_State _Obj_MineState = Mine_State.READY;
 
     //機雷とサメの移動幅
     [HideInInspector]
@@ -53,10 +56,6 @@ public class Obj_Cave_Dive : MonoBehaviour
     private float _Keep_sin = 0.0f;
     //方向転換用
     private Vector2 _Dir;
-
-    //初回起動用
-    private bool _Is_once = true;
-
 
     // Start is called before the first frame update
     void Start()
@@ -84,110 +83,25 @@ public class Obj_Cave_Dive : MonoBehaviour
         {
             //プレイヤー
             case Obj_ID.PLAYER:
-                {
-                    //機雷が爆発フェーズの場合はプレイヤー削除
-                    if(sGameManager._MineState == Mine_State.EXPLOSION)
-                        sGameManager.Delete_Obj(gameObject);
-
-                    //プレイヤーの角度変更
-                    Player_Angle_Change();
-                    //プレイヤーのアニメーション変更処理
-                    Player_Animation(_Img);
-
-                    switch (sGameManager._GoalMoveState)
-                    {
-                        case GoalMoveState.INVISIBLE:
-                        case GoalMoveState.DISPLAY:
-                        {
-                            //プレイヤーの移動処理
-                            Player_Move();
-
-                            //プレイヤーの矢印の表示設定をタッチの可否で切り替える
-                            sImageManager.Change_Active(_PlayerArrow.gameObject, sClickManager._Is_Touch_or_Click);
-
-                            if (_PlayerState == Player_State.NO_OPERATION)
-                            {
-                                _Invincible_cnt++;
-                                //プレイヤーの無敵時間以上になった場合
-                                if (_Invincible_cnt >= sGamePreference._Player__Invincible_Frame)
-                                {
-                                    _Invincible_cnt = 0;
-                                    _PlayerState = Player_State.PLAY;
-                                }
-                            }
-                            break;
-                        }
-                        case GoalMoveState.PLAYER_IN:
-                        {
-                            _Rigid2D.velocity = transform.up * sGamePreference._Player_MoveSpeed;
-
-                            //画面外処理
-                            if (Out_Screen(gameObject))
-                                sGameManager._GoalMoveState = GoalMoveState.END;
-
-                                break;
-                        }
-                        case GoalMoveState.END:
-                        {
-                            gNOW_GAMESTATE = GameState.GAMECLEAR;
-                            sGameManager.Delete_Obj(gameObject);
-                            break;
-                        }
-                    }
-                    break;
-                }
+                Player_Action();
+                break;
             //財宝
             case Obj_ID.TREASURE:
-                {
-                    break;
-                }
+                break;
             //機雷
             case Obj_ID.MINE:
-                {
-                    //移動処理
-                    Spike_Move();
-
-                    switch (sGameManager._MineState)
-                    {
-                        case Mine_State.EXPLOSION:
-                            {
-                                //爆発アニメーション
-                                if (Short_Animation(_Img, sImageManager._Mine_Anim_img, 10))
-                                sGameManager._MineState = Mine_State.DELETE;       
-                                break;
-                            }
-                        case Mine_State.DELETE:
-                            {
-                                //ゲームオーバー
-                                gNOW_GAMESTATE = GameState.GAMEOVER;
-                                //削除
-                                sGameManager.Delete_Obj(gameObject);
-                                break;
-                            }
-                    }
-                    break;
-                }
+                Mine_Action();
+                break;
             //サメ
             case Obj_ID.SHARK:
-                {
-                    Shark_Move();
-                    break;
-                }
+                Shark_Move();
+                break;
             //岩
             case Obj_ID.ROCK:
-                {
-                    break;
-                }
+                break;
             case Obj_ID.GOAL_ARROW:
-                {
-                    if(sGameManager._GoalMoveState == GoalMoveState.DISPLAY && _Is_once)
-                    {
-                        //不透明にする
-                        sImageManager.Change_Alpha(_Img, 1.0f);
-                        _Is_once = false;
-                    }
-                    break;
-                }
+                GoalArrow_Action();
+                break;
         }
     }
 
@@ -254,13 +168,87 @@ public class Obj_Cave_Dive : MonoBehaviour
         }
     }
 
+    #region プレイヤー関係 ------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// プレイヤーの処理
+    /// </summary>
+    private void Player_Action()
+    {
+        if(_PlayerState == Player_State.TIME_OVER)
+        {
+            //死亡時アニメーション
+            Normal_Animation(_Img, sImageManager._Player_Dead_img, sGamePreference._Player_Anim_Cnt);
+            return;
+        }
+
+        //プレイヤーの角度変更
+        Player_Angle_Change();
+        //プレイヤーのアニメーション変更処理
+        Player_Animation(_Img);
+
+        switch (sGameManager._GoalMoveState)
+        {
+            case GoalMoveState.INVISIBLE:
+            case GoalMoveState.DISPLAY_READY:
+                {
+                    //プレイヤーの移動処理
+                    Player_Move();
+
+                    //プレイヤーの矢印の表示設定をタッチの可否で切り替える
+                    sImageManager.Change_Active(_PlayerArrow.gameObject, sClickManager._Is_Touch_or_Click);
+
+                    if (_PlayerState == Player_State.NO_OPERATION)
+                    {
+                        _Invincible_cnt++;
+                        //プレイヤーの無敵時間以上になった場合
+                        if (_Invincible_cnt >= sGamePreference._Player__Invincible_Frame)
+                        {
+                            _Invincible_cnt = 0;
+                            _PlayerState = Player_State.PLAY;
+                        }
+                    }
+                    break;
+                }
+            case GoalMoveState.PLAYER_IN:
+                {
+                    _Rigid2D.velocity = transform.up * sGamePreference._Player_MoveSpeed;
+
+                    //画面外処理
+                    if (Out_Screen(gameObject))
+                        sGameManager._GoalMoveState = GoalMoveState.END;
+
+                    break;
+                }
+            case GoalMoveState.END:
+                {
+                    gNOW_GAMESTATE = GameState.GAMECLEAR;
+                    sGameManager.Delete_Obj(gameObject);
+                    break;
+                }
+        }
+    }
+
+    /// <summary>
+    /// タイムオーバーした時のプレイヤーの設定
+    /// </summary>
+    public void TimeOver_Player_Setting()
+    {
+        _Anim_cnt = 0;
+        _Anim_index = 0;
+
+        _PlayerState = Player_State.TIME_OVER;
+        //プレイヤーの矢印非表示
+        sImageManager.Change_Active(_PlayerArrow.gameObject, false);
+    }
+
     /// <summary>
     /// プレイヤーの移動処理
     /// </summary>
     private void Player_Move()
     {
         //プレイ中以外は終了
-        if(gNOW_GAMESTATE != GameState.PLAYING || 
+        if (gNOW_GAMESTATE != GameState.PLAYING ||
            _PlayerState == Player_State.NO_OPERATION)
         {
             sClickManager._Is_Touch_or_Click = false;
@@ -338,7 +326,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         {
             sImageManager.Change_Image(_Img, sImageManager._Player_Front_img);  //画像変更
             //角度調整
-            switch(_PlayerDir)
+            switch (_PlayerDir)
             {
                 case Dir_ID.UP:
                 case Dir_ID.DOWN:
@@ -359,7 +347,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         }
 
         //一定間隔未満は終了
-        if (_Anim_cnt < sGamePreference._Player_Anim_Cnt) 
+        if (_Anim_cnt < sGamePreference._Player_Anim_Cnt)
             return;
 
         switch (_PlayerDir)
@@ -424,12 +412,43 @@ public class Obj_Cave_Dive : MonoBehaviour
         }
     }
 
+    #endregion ------------------------------------------------------------------------------------------------------------
+
+    #region プレイヤー以外のオブジェクト関係 ------------------------------------------------------------------------------
+
+    /// <summary>
+    /// 機雷の処理
+    /// </summary>
+    private void Mine_Action()
+    {
+        //移動処理
+        Mine_Move();
+        switch (_Obj_MineState)
+        {
+            case Mine_State.EXPLOSION:
+                {
+                    //爆発アニメーション
+                    if (Short_Animation(_Img, sImageManager._Mine_Anim_img, 10))
+                        _Obj_MineState = Mine_State.DELETE;
+                    break;
+                }
+            case Mine_State.DELETE:
+                {
+                    //ゲームオーバー
+                    gNOW_GAMESTATE = GameState.GAMEOVER;
+                    //削除
+                    sGameManager.Delete_Obj(gameObject);
+                    break;
+                }
+        }
+    }
+
     /// <summary>
     /// 機雷の移動処理
     /// </summary>
-    private void Spike_Move()
+    private void Mine_Move()
     {
-        if(sGameManager._MineState == Mine_State.READY)
+        if (_Obj_MineState == Mine_State.READY)
         {
             //Mathf.Sinはサイン波で -1～ 1 の値を返す
             _Dir.y = Mathf.Sin(Time.time * sGamePreference._Mine_MoveSpeed + _PhaseOffset);
@@ -479,13 +498,30 @@ public class Obj_Cave_Dive : MonoBehaviour
     }
 
     /// <summary>
+    /// ゴールの矢印の処理
+    /// </summary>
+    private void GoalArrow_Action()
+    {
+        if (sGameManager._GoalMoveState == GoalMoveState.DISPLAY)
+        {
+            //不透明にする
+            sImageManager.Change_Alpha(_Img, 1.0f);
+            sGameManager._GoalMoveState = GoalMoveState.DISPLAY_READY;
+        }
+    }
+
+    #endregion ------------------------------------------------------------------------------------------------------------
+
+    #region 当たり判定 ----------------------------------------------------------------------------------------------------
+
+    /// <summary>
     /// Trigger コライダーでの衝突判定「すり抜け判定」
     /// </summary>
     /// <param name="collision">衝突した相手の Collider2D</param>
     void OnTriggerEnter2D(Collider2D collision)
     {
         //プレイヤー以外の場合は終了
-        if(_Obj_ID != Obj_ID.PLAYER) 
+        if (_Obj_ID != Obj_ID.PLAYER)
             return;
 
         //衝突したオブジェクトIDを取得
@@ -494,19 +530,19 @@ public class Obj_Cave_Dive : MonoBehaviour
         switch (collision_obj_id)
         {
             case Obj_ID.TREASURE:
-            {
-                //マスク画像のアルファ値を減少させる
-                sGameManager.Dec_Mask_Alpha();
-                //財宝の削除
-                sGameManager.Delete_Obj(collision.gameObject);
-                break;
-            }
+                {
+                    //マスク画像のアルファ値を減少させる
+                    sGameManager.Dec_Mask_Alpha();
+                    //財宝の削除
+                    sGameManager.Delete_Obj(collision.gameObject);
+                    break;
+                }
             case Obj_ID.SHARK:
-            {
-                //空気ゲージを減少
-                sGameManager.Dec_AirGage_Timer(10);
-                break;
-            }
+                {
+                    //空気ゲージを減少
+                    sGameManager.Dec_AirGage_Timer(10);
+                    break;
+                }
             case Obj_ID.GOAL:
                 {
                     sGameManager._GoalMoveState = GoalMoveState.PLAYER_IN;
@@ -548,7 +584,9 @@ public class Obj_Cave_Dive : MonoBehaviour
             case Obj_ID.MINE:
                 {
                     //機雷爆発フェーズ
-                    sGameManager._MineState = Mine_State.EXPLOSION;
+                    collision.transform.GetComponent<Obj_Cave_Dive>()._Obj_MineState = Mine_State.EXPLOSION;
+                    //プレイヤー削除
+                    sGameManager.Delete_Obj(gameObject);
                     break;
                 }
             //サメ
@@ -570,7 +608,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                 {
                     //ノックバック処理
                     KnockBack(collision, sGamePreference._Player_KnockBackSpeed);
-                
+
                     if (_PlayerState == Player_State.PLAY)
                         _PlayerState = Player_State.NO_OPERATION; //操作不可にする
 
@@ -578,6 +616,10 @@ public class Obj_Cave_Dive : MonoBehaviour
                 }
         }
     }
+
+    #endregion ------------------------------------------------------------------------------------------------------------
+
+    #region 汎用系 --------------------------------------------------------------------------------------------------------
 
     /// <summary>
     /// ノックバック処理
@@ -635,6 +677,28 @@ public class Obj_Cave_Dive : MonoBehaviour
     }
 
     /// <summary>
+    /// 常時アニメーション処理
+    /// </summary>
+    /// <param name="target_img">対象の画像オブジェクト</param>
+    /// <param name="change_img">アニメーションするSprite配列</param>
+    private void Normal_Animation(Image target_img, Sprite[] change_img, int anim_change_frame)
+    {
+        _Anim_cnt++;
+        if (_Anim_cnt > anim_change_frame)
+        {
+            //画像変更
+            sImageManager.Change_Image(target_img, change_img[_Anim_index]);
+
+            //インデクス設定
+            if (_Anim_index < change_img.Length - 1)
+                _Anim_index++;
+            else
+                _Anim_index = 0;
+            _Anim_cnt = 0;
+        }
+    }
+
+    /// <summary>
     /// 一回だけ再生されるアニメーション処理
     /// </summary>
     /// <param name="target_img"></param>
@@ -658,5 +722,8 @@ public class Obj_Cave_Dive : MonoBehaviour
         }
         return false;
     }
+
+
+    #endregion ------------------------------------------------------------------------------------------------------------
 
 }

@@ -43,6 +43,7 @@ namespace Common_Cave_Dive
         {
             INVISIBLE,      //非表示
             DISPLAY,        //表示
+            DISPLAY_READY,  //表示して待機
             PLAYER_IN,      //プレイヤーが入った
             END,
         }
@@ -123,6 +124,7 @@ namespace Common_Cave_Dive
         {
             PLAY,           //通常
             NO_OPERATION,   //操作不可
+            TIME_OVER,      //制限時間を超えた
         }
 
         /// <summary>
@@ -177,7 +179,7 @@ namespace Common_Cave_Dive
         public static GameState gNOW_GAMESTATE = GameState.READY;
 
         //現在のステージレベル
-        public static int gNOW_STAGE_LEVEL = 3;
+        public static int gNOW_STAGE_LEVEL = 1;
 
         //各スクリプト
         public static Game_Manager_Cave_Dive    sGameManager;

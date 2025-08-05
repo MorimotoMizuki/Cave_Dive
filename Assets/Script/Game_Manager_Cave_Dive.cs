@@ -33,6 +33,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     [Header("カメラ")]
     public Camera _Camera;
 
+    //プレイヤーの情報
+    private Obj_Cave_Dive _Player_Data;
+
     //ゴールの処理のフェーズ用
     [HideInInspector] public GoalMoveState _GoalMoveState;
 
@@ -48,9 +51,6 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     private float _Limit_time;   //制限時間
     private float _Current_time; //残り時間
     private float _Damage_time;  //障害物で減らす時間
-
-    //機雷の状態
-    [HideInInspector] public  Mine_State _MineState = Mine_State.READY;
 
     // Start is called before the first frame update
     void Start()
@@ -122,9 +122,6 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
             Delete_Obj(child.gameObject);
         foreach (Transform child in _Rock_area)
             Delete_Obj(child.gameObject);
-
-        //機雷の状態を待機フェーズに設定
-        _MineState = Mine_State.READY;
     }
 
     /// <summary>
@@ -215,6 +212,12 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
                 switch (chara_data[i].Obj_ID)
                 {
+                    case Obj_ID.PLAYER:
+                        {
+                            //プレイヤーのデータを追加
+                            _Player_Data = obj.GetComponent<Obj_Cave_Dive>();
+                            break;
+                        }
                     case Obj_ID.TREASURE:
                     {
                         //財宝のデータ追加
@@ -317,6 +320,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
             //ゲームオーバー
             gNOW_GAMESTATE = GameState.GAMEOVER;
+            //タイムオーバーした場合のプレイヤーの設定
+            _Player_Data.TimeOver_Player_Setting();
             return true;
         }
 
