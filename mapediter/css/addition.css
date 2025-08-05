@@ -1,0 +1,159 @@
+body{
+	url("../js/game_base.js");
+	background-color: #666;
+}
+
+#view {
+	width:720px;
+	height:540px;
+	margin:4px;
+	padding:0 auto;
+	border:solid 1px #000000;
+}
+#param {
+	width:400px;
+	height:532px;
+	margin:4px;
+	padding:4px;
+	border:solid 1px #000000;
+	background-color: #fff;
+    font-size: 10px;
+}
+#chipset_view {
+	width:512px;
+	height:256px;
+	margin:4px;
+	padding:0 auto;
+	border:solid 1px #000000;
+	background-color: #000;
+}
+#console {
+	width:600px;
+	height:252px;
+	margin:4px;
+	padding:0 auto;
+	border:solid 1px #000000;
+}
+
+#message {
+	resize: none;
+	width: 100%;
+	height: 100%;
+	margin:0;
+	padding:0 auto;
+    font-size: 10px;
+	background-color: #fff;
+}
+
+.clear {
+	clear:both;
+	overflow:hidden;
+	height:1px;
+}
+
+.menu {
+	display: flex;
+	justify-content: flex-start;
+	list-style-type: none;
+	color: #fff;
+	padding: 0;
+	font-size: small;
+	font-weight: bold;
+}
+
+.menu li {
+	position: relative;
+	width: 100px;
+	margin-left: 1px;
+	padding: 5px;
+	background: #444444;
+}
+
+.menuSub {
+	position: absolute;
+	margin-left: -6px;
+	padding: 0;
+	display: none;
+}
+
+.menuSub li a {
+	padding: 5px;
+	margin-left: -5px;
+	margin-right: -5px;
+	margin-bottom: -5px;
+	display: block;
+	color: #fff;
+	text-decoration: none;
+}
+
+.menuSub li a:hover {
+	background: #888888;
+}
+
+div.param_window {
+	line-height:2.2;
+}
+
+div.layerlist {
+	line-height:normal;
+	border: solid thin gray;
+	background-color: white;
+	height: 14em;
+	overflow: hidden;
+	margin: 4px;
+}
+
+div.banklist {
+	line-height:normal;
+	border: solid thin gray;
+	background-color: white;
+	height: 7em;
+	overflow: hidden;
+	margin: 4px;
+}
+
+table, td, th {
+	font-size: 10pt;
+	border: 1px #000 solid;
+}
+
+div.param_dialog {
+	line-height:2.2;
+	font-size:10pt;
+}
+
+div.whole_map_dialog {
+	line-height:2.2;
+	font-size:10pt;
+	width: 1024px;
+	height: 1024px;
+}
+
+div.export_dialog {
+	line-height:2.2;
+	font-size:10pt;
+	width: 800px;
+	height: 800px;
+}
+
+div.export_csv_dialog {
+	line-height:2.2;
+	font-size:10pt;
+	width: 800px;
+	height: 800px;
+}
+
+div.edging_dialog {
+	line-height:2.2;
+	font-size:10pt;
+	width: 490px;
+	height: 640px;
+}
+
+div.help_dialog {
+	line-height:2.2;
+	font-size:7pt;
+	width: 640px;
+	height: 640px;
+}
+

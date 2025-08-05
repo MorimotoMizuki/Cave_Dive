@@ -253,7 +253,8 @@ MonoBehaviour:
   screen_change: {fileID: 1373294664}
   image_manager: {fileID: 2115879507}
   csv_roader: {fileID: 800541848}
-  _AirGage_Time: 3c0000007800000078000000780000003c000000
+  _AirGage_Time: 3c000000780000007800000078000000b4000000
+  _Player_Angle: 0000000000000000000000000000000003000000
   _Stage_Chara_Data:
   - StageNum: 1
     Chara_Data:
@@ -344,7 +345,7 @@ MonoBehaviour:
       move_range: 0
       is_start_up_right: 0
     - Obj_ID: 5
-      pos: {x: -100, y: 350}
+      pos: {x: -150, y: 350}
       move_range: 0
       is_start_up_right: 0
     - Obj_ID: 3
@@ -363,6 +364,48 @@ MonoBehaviour:
       pos: {x: 87, y: 240}
       move_range: 0.8
       is_start_up_right: 0
+  - StageNum: 5
+    Chara_Data:
+    - Obj_ID: 1
+      pos: {x: 105, y: 360}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 5
+      pos: {x: 150, y: 340}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 2
+      pos: {x: -200, y: 290}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 2
+      pos: {x: -14, y: -80}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 2
+      pos: {x: 110, y: -80}
+      move_range: 0
+      is_start_up_right: 0
+    - Obj_ID: 3
+      pos: {x: 8, y: 240}
+      move_range: 0.7
+      is_start_up_right: 1
+    - Obj_ID: 3
+      pos: {x: -108, y: 235}
+      move_range: 0.7
+      is_start_up_right: 0
+    - Obj_ID: 3
+      pos: {x: -100, y: -38}
+      move_range: 1.1
+      is_start_up_right: 0
+    - Obj_ID: 4
+      pos: {x: 63, y: 70}
+      move_range: 1
+      is_start_up_right: 0
+    - Obj_ID: 4
+      pos: {x: 30, y: -315}
+      move_range: 1.2
+      is_start_up_right: 1
   _Judge_Screen_Latency: 1
   _Max_Mask_Alpha: 0.8
   _Min_Mask_Alpha: 0.2
@@ -1093,9 +1136,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.3093929
+    x: 0.22818184
     y: 0
-    width: 0.3812142
+    width: 0.5436363
     height: 1
   near clip plane: 0.3
   far clip plane: 1000

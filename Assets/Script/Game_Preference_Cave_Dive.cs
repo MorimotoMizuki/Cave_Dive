@@ -18,6 +18,9 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     [Header("ステージの空気ゲージ制限時間(秒)")]
     public int[] _AirGage_Time;
 
+    [Header("ステージごとのプレイヤーの初期角度")]
+    public Dir_ID[] _Player_Angle;
+
     [Header("ステージごとの生成するキャラクターリスト\n\n座標 x,y :左上(-300, 360), 右下(300, -450)\n\n※オブジェクトのプレハブに設定していないオブジェクトは生成できません")]
     public List<Stage_Data> _Stage_Chara_Data;
 

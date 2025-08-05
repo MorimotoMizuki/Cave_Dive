@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<title>マップエディタ</title>
+<link rel="stylesheet" href="./css/reset.css" type="text/css" />
+<link rel="stylesheet" href="./css/addition.css" type="text/css" />
+<script src="./js/jquery/jquery.js"></script>
+<script src="./js/game_base.js"></script>
+<body>
+	<input id="csv_file" type="file" accept=".csv" style="display:none" >
+	<input id="mapdata_file" type="file" accept=".bin" style="display:none" >
+	<input id="mapchip_file" type="file" accept="image/*" style="display:none" >
+
+	<dialog id="paramEditDialog">
+		<form>
+			<input type="hidden" id="edit_item_id" value="">
+			<div class="param_dialog" >
+			<label>
+				X:<input id="edit_param_x" style="width:60px;" > Y:<input id="edit_param_y" style="width:60px;" > TAG:<input id="edit_param_tag" style="width:250px;" ><BR>
+				COMMENT:<input id="edit_param_comment" style="width:400px;" >
+			</label>
+			</div>
+			<div>
+				<button value="cancel" formmethod="dialog">キャンセル</button>
+				<button value="ok" formmethod="dialog">OK</button>
+			</div>
+		</form>
+	</dialog>
+	<dialog id="wholeMapDialog">
+		<form>
+			<div>
+				<button value="cancel" formmethod="dialog">閉じる</button>
+			</div>
+			<div class="whole_map_dialog" >
+				<canvas id="whole_map_canvas"></canvas>
+			</div>
+		</form>
+	</dialog>
+	<dialog id="exportDialog">
+		<form>
+			<div>
+				<button value="cancel" formmethod="dialog">閉じる</button>
+			</div>
+			<div class="export_dialog" >
+				<textarea readonly="readonly" id="export_data" style="width:100%;height:100%;" ></textarea>
+			</div>
+		</form>
+	</dialog>
+	<dialog id="exportCSVDialog">
+		<form>
+			<div>
+				<button value="cancel" formmethod="dialog">閉じる</button>
+			</div>
+			<div class="export_csv_dialog" >
+				<textarea readonly="readonly" id="export_csv_data" style="width:100%;height:100%;" ></textarea>
+			</div>
+		</form>
+	</dialog>
+	<dialog id="edgingDialog">
+		<form>
+			<div class="edging_dialog" >
+				<canvas id="edging_type_canvas"></canvas>
+			</div>
+			<div>
+				縁取りのタイプを選択してください<br>
+				<button value="cancel" formmethod="dialog">キャンセル</button>
+				<button value="ok" formmethod="dialog">OK</button>
+			</div>
+		</form>
+	</dialog>
+	<dialog id="helpDialog">
+		<form>
+			<div>
+				<button value="cancel" formmethod="dialog">閉じる</button>
+			</div>
+			<div class="help_dialog" >
+				<OBJECT DATA="./text/help.txt"TYPE="text/plain" WIDTH="100%" HEIGHT="100%"></OBJECT>
+			</div>
+		</form>
+	</dialog>
+	<div style="width:1024px;" >
+		<ul class="menu">
+			<li>
+				file
+				<ul class="menuSub">
+					<li><a href="javascript:void(0);" onclick="open_chipset_filedialog()" >load chipset</a></li>
+					<li><a href="javascript:void(0);" onclick="open_mapdata_load_dialog()" >load mapdata</a></li>
+					<li><a href="javascript:void(0);" onclick="open_mapdata_save_dialog()" >save mapdata</a></li>
+				</ul>
+			</li>
+			<li>
+				edit
+				<ul class="menuSub">
+					<li><a href="javascript:void(0);" onclick="open_whole_map()">whole map</a></li>
+					<li><a href="javascript:void(0);" onclick="open_export_dialog()">export</a></li>
+					<li><a href="javascript:void(0);" onclick="open_export_csv_dialog()">export csv</a></li>
+					<li><a href="javascript:void(0);" onclick="open_edging_dialog()">edging</a></li>
+				</ul>
+			</li>
+			<li>
+				help
+				<ul class="menuSub">
+					<li><a href="javascript:void(0);" onclick="showHelp()" >help</a></li>
+					<li><a href="javascript:void(0);" onclick="showAbout()" >about</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<div style="display: flex" >
+		<div id="view">
+			<canvas id="canvas_view"></canvas>
+		</div>
+		<div id="param" class="param_window" >
+			MAP X:<input id="map_x" style="width:60px;" > MAP Y:<input id="map_y" style="width:60px;" ><br>
+			MAP W:<input id="map_w" style="width:60px;" > MAP H:<input id="map_h" style="width:60px;" ><br>
+			MAP LOOP:<input type="checkbox" id="map_loop_checkbox"><br>
+			<br>
+			CURSOR SIZE:
+			<select id="cursor_size">
+				<option value="1">1x1</option>
+				<option value="3">3x3</option>
+				<option value="5">5x5</option>
+			</select><br>
+			<br>
+			CHIP SIZE:
+			<select id="chip_size">
+				<option value="16">16x16</option>
+				<option value="32">32x32</option>
+				<option value="64">64x64</option>
+			</select><br>
+			<br>
+			DISPLAY SIZE:
+			<select id="display_size">
+				<option value="16">16x16</option>
+				<option value="32">32x32</option>
+				<option value="64">64x64</option>
+			</select><br>
+			<br>
+			<div class="layerlist">
+				<div onclick="select_layer(0)" id="layer_event" style="background-color: rgba(0,0,0,0);padding: 4px;"><input type="checkbox" id="layer_event_check"><label for="checkbox1"  >EVENT LAYER</label></div>
+				<div onclick="select_layer(1)" id="layer_char" style="background-color: rgba(0,0,0,0);padding: 4px;"><input type="checkbox" id="layer_char_check"><label   for="checkbox2">CHAR LAYER</label></div>
+				<div onclick="select_layer(2)" id="layer2" style="background-color: rgba(0,0,0,0);padding: 4px;"><input type="checkbox" id="layer2_check"><label for="checkbox3">LAYER2</label></div>
+				<div onclick="select_layer(3)" id="layer1" style="background-color: rgba(0,0,0,0);padding: 4px;"><input type="checkbox" id="layer1_check"><label for="checkbox4">LAYER1</label></div>
+				<div onclick="select_layer(4)" id="layer0" style="background-color: rgba(0,0,0,0);padding: 4px;"><input type="checkbox" id="layer0_check"><label for="checkbox5">LAYER0</label></div>
+			</div>	
+			<div id="chip_status">	
+				<div class="banklist">
+					<div onclick="select_bank(0)" id="bank0" style="background-color: rgba(0,0,0,0);padding: 4px;">BANK0</div>
+					<div onclick="select_bank(1)" id="bank1" style="background-color: rgba(0,0,0,0);padding: 4px;">BANK1</div>
+					<div onclick="select_bank(2)" id="bank2" style="background-color: rgba(0,0,0,0);padding: 4px;">BANK2</div>
+				</div>		
+				CHIP NO:<input id="chip_no" style="width:60px;" >
+				<br>
+			</div>
+		</div>
+	</div>
+	<div style="display: flex" >
+		<div id="chipset_view" style="overflow:scroll" >
+			<div id="chipset_image0" style="display:block;" ><canvas id="canvas_chipset0"></canvas></div>
+			<div id="chipset_image1" style="display:none;" ><canvas id="canvas_chipset1"></canvas></div>
+			<div id="chipset_image2" style="display:none;" ><canvas id="canvas_chipset2"></canvas></div>
+			<div id="character_list" style="display:none;" >
+				<ul id="character_list_ul" style="margin:0;padding:0;">
+				</ul>
+			</div>
+			<div id="event_list" style="display:none;" >
+				<ul id="event_list_ul" style="margin:0;padding:0;">
+				</ul>
+			</div>
+		</div>
+		<div id="console">
+		<textarea readonly="readonly" id="message" ></textarea>
+		</div>
+	</div>
+</body>
+</html>

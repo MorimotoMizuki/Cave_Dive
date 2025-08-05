@@ -29,7 +29,7 @@ public class Obj_Cave_Dive : MonoBehaviour
     //プレイヤーの矢印オブジェクト
     private Transform _PlayerArrow;
     //向いている角度
-    Dir_ID _PlayerDir = Dir_ID.NONE;
+    Dir_ID _PlayerDir;
     //アニメーション用
     private int _Anim_index = 0;
     private int _Anim_cnt = 0;
@@ -121,12 +121,35 @@ public class Obj_Cave_Dive : MonoBehaviour
 
                     //プレイヤーの子オブジェクトのRectTransform情報を取得
                     _Rect = transform.GetChild(0).GetComponent<RectTransform>();
-                    _Img = transform.GetChild(0).GetComponent<Image>();
-
+                    _Img  = transform.GetChild(0).GetComponent<Image>();
                     //プレイヤーの子オブジェクトの情報を取得
                     _PlayerArrow = transform.GetChild(1);
 
-                    transform.eulerAngles = new Vector3(0, 0, 270);
+                    //プレイヤーの初期角度
+                    int index = gNOW_STAGE_LEVEL - 1;
+                    //インデクスが無い場合は下向きにする
+                    if (index >= sGamePreference._Player_Angle.Length)
+                        transform.eulerAngles = new Vector3(0, 0, 180);
+                    else
+                    {
+                        float angle = 0.0f;
+                        switch (sGamePreference._Player_Angle[index])
+                        {
+                            case Dir_ID.RIGHT:
+                                angle = 270.0f;
+                                break;
+                            case Dir_ID.LEFT:
+                                angle = 90.0f;
+                                break;
+                            case Dir_ID.UP:
+                                angle = 0.0f;
+                                break;
+                            case Dir_ID.DOWN:
+                                angle = 180.0f;
+                                break;
+                        }
+                        transform.eulerAngles = new Vector3(0, 0, angle);
+                    }
                     break;
                 }
             case Obj_ID.TREASURE:
