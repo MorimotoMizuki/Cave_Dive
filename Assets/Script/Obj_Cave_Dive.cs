@@ -1,10 +1,8 @@
-﻿using Common_Cave_Dive;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 using static Common_Cave_Dive.GrovalConst_CaveDive;
 using static Common_Cave_Dive.GrovalNum_CaveDive;
-using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 public class Obj_Cave_Dive : MonoBehaviour
 {
@@ -17,6 +15,9 @@ public class Obj_Cave_Dive : MonoBehaviour
 
     [Header("オブジェクトID")]
     [SerializeField] private Obj_ID _Obj_ID = Obj_ID.NONE;
+
+    //方向転換用
+    private Vector2 _Dir;
 
     #endregion ------------------------------------------------------------------------------------------------------------
 
@@ -54,8 +55,6 @@ public class Obj_Cave_Dive : MonoBehaviour
     private Vector3 _Start_pos;
     //移動幅保存用
     private float _Keep_sin = 0.0f;
-    //方向転換用
-    private Vector2 _Dir;
 
     // Start is called before the first frame update
     void Start()
@@ -85,9 +84,6 @@ public class Obj_Cave_Dive : MonoBehaviour
             case Obj_ID.PLAYER:
                 Player_Action();
                 break;
-            //財宝
-            case Obj_ID.TREASURE:
-                break;
             //機雷
             case Obj_ID.MINE:
                 Mine_Action();
@@ -96,9 +92,7 @@ public class Obj_Cave_Dive : MonoBehaviour
             case Obj_ID.SHARK:
                 Shark_Move();
                 break;
-            //岩
-            case Obj_ID.ROCK:
-                break;
+            //ゴールの矢印
             case Obj_ID.GOAL_ARROW:
                 GoalArrow_Action();
                 break;

@@ -2,8 +2,6 @@
 using UnityEngine;
 
 using static Common_Cave_Dive.GrovalConst_CaveDive;
-using static Common_Cave_Dive.GrovalNum_CaveDive;
-using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 namespace Common_Cave_Dive
 {

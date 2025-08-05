@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 using static Common_Cave_Dive.GrovalConst_CaveDive;
 using static Common_Cave_Dive.GrovalNum_CaveDive;
-using static Common_Cave_Dive.GrovalStruct_CaveDive;
 
 public class Screen_Change_Cave_Dive : MonoBehaviour
 {

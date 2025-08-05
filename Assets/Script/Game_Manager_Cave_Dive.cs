@@ -5,7 +5,6 @@ using UnityEngine;
 using static Common_Cave_Dive.GrovalConst_CaveDive;
 using static Common_Cave_Dive.GrovalNum_CaveDive;
 using static Common_Cave_Dive.GrovalStruct_CaveDive;
-using static UnityEditor.PlayerSettings;
 
 public class Game_Manager_Cave_Dive : MonoBehaviour
 {
@@ -98,6 +97,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         }
     }
 
+    #region ステージ関連 --------------------------------------------------------------------------------------------------
+
     /// <summary>
     /// ステージリセット処理
     /// </summary>
@@ -135,14 +136,14 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
             _Rock_StageMap = sCsvRoader._RockMapData[index];
         else
         {
-            Debug.LogError("岩ステージマップデータがありません"); 
+            Debug.LogError("岩ステージマップデータがありません");
             return;
         }
 
         //岩オブジェクトマップ生成
         Create_RockMap(_Rock_StageMap);
 
-        for(int i = 0; i < sGamePreference._Stage_Chara_Data.Count; i++)
+        for (int i = 0; i < sGamePreference._Stage_Chara_Data.Count; i++)
         {
             //キャラデータのステージ番号とステージレベルが一致した場合
             if (sGamePreference._Stage_Chara_Data[i].StageNum == gNOW_STAGE_LEVEL)
@@ -170,11 +171,11 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
         for (int y = 0; y < map_data.Count; y++)
         {
-            for(int x = 0; x < map_data[y].Count; x++)
+            for (int x = 0; x < map_data[y].Count; x++)
             {
                 int index = map_data[y][x];
                 //空白ではない場合
-                if(index != (int)Rock_ID.NONE)
+                if (index != (int)Rock_ID.NONE)
                 {
                     //オブジェクト生成
                     GameObject obj = Instantiate(_Rock_prefab[index - 1], _Rock_area);
@@ -196,12 +197,12 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// <param name="chara_data"></param>
     private void Create_CharaMap(Character_Data[] chara_data)
     {
-        for(int i = 0;  i < chara_data.Length; i++)
+        for (int i = 0; i < chara_data.Length; i++)
         {
             int index = (int)chara_data[i].Obj_ID;
 
             //オブジェクトプレハブに設定されているオブジェクトだけ生成
-            if (index <= _Obj_prefab.Length && index > 0) 
+            if (index <= _Obj_prefab.Length && index > 0)
             {
                 //オブジェクト生成
                 GameObject obj = Instantiate(_Obj_prefab[index - 1], _Obj_area);
@@ -219,11 +220,11 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                             break;
                         }
                     case Obj_ID.TREASURE:
-                    {
-                        //財宝のデータ追加
-                        _Treasure_List.Add(obj);
-                        break;
-                    }
+                        {
+                            //財宝のデータ追加
+                            _Treasure_List.Add(obj);
+                            break;
+                        }
                     case Obj_ID.MINE:
                     case Obj_ID.SHARK:
                         {
@@ -238,52 +239,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// オブジェクトの削除処理
-    /// </summary>
-    /// <param name="target_obj">対象のゲームオブジェクト</param>
-    public void Delete_Obj(GameObject target_obj)
-    {
-        Destroy(target_obj);
-    }
+    #endregion ------------------------------------------------------------------------------------------------------------
 
-    /// <summary>
-    /// ゴール開放判定
-    /// </summary>
-    public void Goal_Open_Judge()
-    {
-        //ゴールが非表示フェーズ以外の場合は終了
-        if (_GoalMoveState != GoalMoveState.INVISIBLE)
-            return;
-
-        for(int i = 0; i < _Treasure_List.Count; i++)
-        {
-            //財宝オブジェクトがある場合は終了
-            if (_Treasure_List[i] != null)
-                return;
-        }
-
-        //ゴールを表示フェーズにする
-        _GoalMoveState = GoalMoveState.DISPLAY;
-
-        //ゴール表示
-        sImageManager.Change_Active(_Goal_obj, true);
-        //障害物オブジェクト非表示
-        sImageManager.Change_Active(_Obstacle_obj, false);
-    }
-
-    /// <summary>
-    /// マスク画像のアルファ値の減少処理
-    /// </summary>
-    public void Dec_Mask_Alpha()
-    {
-        //アルファ値の幅
-        float dec_alpha = sGamePreference._Max_Mask_Alpha - sGamePreference._Min_Mask_Alpha;
-        //減少するアルファ値を風船の合計数で割って求める
-        dec_alpha /= _Treasure_List.Count;
-        //マスク画像のアルファ値を減少させる
-        sImageManager.Decrement_Alpha(sImageManager._Mask_obj, dec_alpha);
-    }
+    #region 時間系 --------------------------------------------------------------------------------------------------------
 
     /// <summary>
     /// 制限時間設定
@@ -291,11 +249,11 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     /// <param name="time">制限時間</param>
     public void Set_Limit_Time(float time)
     {
-        _Limit_time   = time;
+        _Limit_time = time;
         _Current_time = time;
-        _Damage_time  = time;
+        _Damage_time = time;
         //タイマー初期表示
-        sImageManager._AirGage_Fill.fillAmount     = Mathf.InverseLerp(0, _Limit_time, _Current_time);
+        sImageManager._AirGage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Current_time);
         sImageManager._Damage_Gage_Fill.fillAmount = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
     }
 
@@ -331,9 +289,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         _Damage_time = Mathf.MoveTowards(_Damage_time, _Current_time, Time.deltaTime * 5.0f);
 
         //タイマー(UI)に反映
-        sImageManager._AirGage_Fill.fillAmount 
+        sImageManager._AirGage_Fill.fillAmount
                     = Mathf.InverseLerp(0, _Limit_time, _Current_time);
-        sImageManager._Damage_Gage_Fill.fillAmount 
+        sImageManager._Damage_Gage_Fill.fillAmount
                     = Mathf.InverseLerp(0, _Limit_time, _Damage_time);
 
         return false;
@@ -372,19 +330,6 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     }
 
     /// <summary>
-    /// 指定したフレーム数待機
-    /// </summary>
-    /// <param name="frame_cnt">フレーム数</param>
-    /// <returns></returns>
-    IEnumerator WaitForFrames(int frame_cnt)
-    {
-        for (int i = 0; i < frame_cnt; i++)
-        {
-            yield return null; // 1フレーム待機
-        }
-    }
-
-    /// <summary>
     /// 空気ゲージ減少処理
     /// </summary>
     /// <param name="dec_time"></param>
@@ -398,8 +343,74 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
             _Current_time = 0;
 
         //一気に減らす場合のみ値を揃えてずれを作る
-        if(_Damage_time < _Current_time)
+        if (_Damage_time < _Current_time)
             _Damage_time = _Current_time;
+    }
+
+    #endregion ------------------------------------------------------------------------------------------------------------
+
+    #region 汎用系 --------------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// オブジェクトの削除処理
+    /// </summary>
+    /// <param name="target_obj">対象のゲームオブジェクト</param>
+    public void Delete_Obj(GameObject target_obj)
+    {
+        Destroy(target_obj);
+    }
+
+    /// <summary>
+    /// マスク画像のアルファ値の減少処理
+    /// </summary>
+    public void Dec_Mask_Alpha()
+    {
+        //アルファ値の幅
+        float dec_alpha = sGamePreference._Max_Mask_Alpha - sGamePreference._Min_Mask_Alpha;
+        //減少するアルファ値を風船の合計数で割って求める
+        dec_alpha /= _Treasure_List.Count;
+        //マスク画像のアルファ値を減少させる
+        sImageManager.Decrement_Alpha(sImageManager._Mask_obj, dec_alpha);
+    }
+
+    /// <summary>
+    /// 指定したフレーム数待機
+    /// </summary>
+    /// <param name="frame_cnt">フレーム数</param>
+    /// <returns></returns>
+    IEnumerator WaitForFrames(int frame_cnt)
+    {
+        for (int i = 0; i < frame_cnt; i++)
+        {
+            yield return null; // 1フレーム待機
+        }
+    }
+
+    #endregion ------------------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// ゴール開放判定
+    /// </summary>
+    public void Goal_Open_Judge()
+    {
+        //ゴールが非表示フェーズ以外の場合は終了
+        if (_GoalMoveState != GoalMoveState.INVISIBLE)
+            return;
+
+        for(int i = 0; i < _Treasure_List.Count; i++)
+        {
+            //財宝オブジェクトがある場合は終了
+            if (_Treasure_List[i] != null)
+                return;
+        }
+
+        //ゴールを表示フェーズにする
+        _GoalMoveState = GoalMoveState.DISPLAY;
+
+        //ゴール表示
+        sImageManager.Change_Active(_Goal_obj, true);
+        //障害物オブジェクト非表示
+        sImageManager.Change_Active(_Obstacle_obj, false);
     }
 
 }
