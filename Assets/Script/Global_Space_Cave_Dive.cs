@@ -150,6 +150,8 @@ namespace Common_Cave_Dive
             //オブジェクトIDが機雷とサメの場合のみ表示
             [Tooltip("機雷とサメの移動幅")]
             public float move_range;
+            [Tooltip("機雷とサメの初期の移動方向\n機雷なら上移動、サメなら右移動")]
+            public bool is_start_up_right;
         }
 
         [System.Serializable]
@@ -175,7 +177,7 @@ namespace Common_Cave_Dive
         public static GameState gNOW_GAMESTATE = GameState.READY;
 
         //現在のステージレベル
-        public static int gNOW_STAGE_LEVEL = 2;
+        public static int gNOW_STAGE_LEVEL = 3;
 
         //各スクリプト
         public static Game_Manager_Cave_Dive    sGameManager;

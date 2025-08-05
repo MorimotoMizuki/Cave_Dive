@@ -41,6 +41,11 @@ public class Obj_Cave_Dive : MonoBehaviour
     //機雷とサメの移動幅
     [HideInInspector]
     public float _MoveRange;
+    //初期の方向フラグ
+    [HideInInspector]
+    public bool _IsStart_Up_Right= true;
+    //初期の方向用
+    private float _PhaseOffset = 0.0f;
 
     //初期座標
     private Vector3 _Start_pos;
@@ -220,13 +225,22 @@ public class Obj_Cave_Dive : MonoBehaviour
                 {
                     //画像設定
                     sImageManager.Change_Image(_Img, sImageManager._Mine_img);
+                    //初期方向設定
+                    if (_IsStart_Up_Right)
+                        _PhaseOffset = 0.0f;
+                    else
+                        _PhaseOffset = Mathf.PI;
                     break;
                 }
             case Obj_ID.SHARK:
                 {
                     //画像設定
                     sImageManager.Change_Image(_Img, sImageManager._Shark_img[(int)Dir_ID.RIGHT]);
-                    _Dir.x = 1.0f;
+                    //初期方向設定
+                    if (_IsStart_Up_Right)
+                        _PhaseOffset = 0.0f;
+                    else
+                        _PhaseOffset = Mathf.PI;
                     break;
                 }
             case Obj_ID.GOAL_ARROW:
@@ -418,7 +432,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         if(sGameManager._MineState == Mine_State.READY)
         {
             //Mathf.Sinはサイン波で -1～ 1 の値を返す
-            _Dir.y = Mathf.Sin(Time.time * sGamePreference._Mine_MoveSpeed);
+            _Dir.y = Mathf.Sin(Time.time * sGamePreference._Mine_MoveSpeed + _PhaseOffset);
             //返された値を (移動幅)_MoveRange で拡大する
             _Dir.y *= _MoveRange;
         }
@@ -433,7 +447,7 @@ public class Obj_Cave_Dive : MonoBehaviour
     private void Shark_Move()
     {
         //Mathf.Sinはサイン波で -1～ 1 の値を返す
-        float current_sin = Mathf.Sin(Time.time * sGamePreference._Shark_MoveSpeed);
+        float current_sin = Mathf.Sin(Time.time * sGamePreference._Shark_MoveSpeed + _PhaseOffset);
         //返された値を (移動幅)_MoveRange で拡大する
         float new_x = current_sin * _MoveRange;
 
@@ -518,18 +532,18 @@ public class Obj_Cave_Dive : MonoBehaviour
         {
             //岩
             case Obj_ID.ROCK:
-            {
-                //ノックバック処理
-                KnockBack(collision);
-
-                if (_PlayerState == Player_State.PLAY)
                 {
-                    //空気ゲージを減少
-                    sGameManager.Dec_AirGage_Timer(sGamePreference._Rock_DecAirGage);
-                    _PlayerState = Player_State.NO_OPERATION; //操作不可にする
+                    //ノックバック処理
+                    KnockBack(collision, sGamePreference._Player_KnockBackSpeed);
+
+                    if (_PlayerState == Player_State.PLAY)
+                    {
+                        //空気ゲージを減少
+                        sGameManager.Dec_AirGage_Timer(sGamePreference._Rock_DecAirGage);
+                        _PlayerState = Player_State.NO_OPERATION; //操作不可にする
+                    }
+                    break;
                 }
-                break;
-            }
             //機雷
             case Obj_ID.MINE:
                 {
@@ -539,29 +553,29 @@ public class Obj_Cave_Dive : MonoBehaviour
                 }
             //サメ
             case Obj_ID.SHARK:
-            {
-                //ノックバック処理
-                KnockBack(collision);
-
-                if (_PlayerState == Player_State.PLAY)
                 {
-                    //空気ゲージを減少
-                    sGameManager.Dec_AirGage_Timer(sGamePreference._Shark_DecAirGage);
-                    _PlayerState = Player_State.NO_OPERATION; //操作不可にする
+                    //ノックバック処理
+                    KnockBack(collision, sGamePreference._Player_KnockBackSpeed * 3.0f);
+
+                    if (_PlayerState == Player_State.PLAY)
+                    {
+                        //空気ゲージを減少
+                        sGameManager.Dec_AirGage_Timer(sGamePreference._Shark_DecAirGage);
+                        _PlayerState = Player_State.NO_OPERATION; //操作不可にする
+                    }
+                    break;
                 }
-                break;
-            }
             //ゴールを塞ぐ障害物
             case Obj_ID.OBSTACLE:
-            {
-                //ノックバック処理
-                KnockBack(collision);
+                {
+                    //ノックバック処理
+                    KnockBack(collision, sGamePreference._Player_KnockBackSpeed);
                 
-                if (_PlayerState == Player_State.PLAY)
-                    _PlayerState = Player_State.NO_OPERATION; //操作不可にする
+                    if (_PlayerState == Player_State.PLAY)
+                        _PlayerState = Player_State.NO_OPERATION; //操作不可にする
 
-                break;
-            }
+                    break;
+                }
         }
     }
 
@@ -569,7 +583,8 @@ public class Obj_Cave_Dive : MonoBehaviour
     /// ノックバック処理
     /// </summary>
     /// <param name="collision">衝突情報をまとめた Collision2D 型</param>
-    private void KnockBack(Collision2D collision)
+    /// <param name="knockback_speed">ノックバックの速度</param>
+    private void KnockBack(Collision2D collision, float knockback_speed)
     {
         //ぶつかった面の法線(プレイヤーを押し返す方向)
         Vector2 normal = collision.contacts[0].normal;
@@ -578,7 +593,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         _Rigid2D.velocity = Vector2.zero;
 
         //法線方向にノックバック
-        _Rigid2D.velocity = normal * sGamePreference._Player_KnockBackSpeed;
+        _Rigid2D.velocity = normal * knockback_speed;
     }
 
     /// <summary>

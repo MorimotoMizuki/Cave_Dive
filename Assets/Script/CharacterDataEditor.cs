@@ -13,6 +13,7 @@ public class CharacterDataEditor : PropertyDrawer
         var objIDProp = property.FindPropertyRelative("Obj_ID");
         var posProp = property.FindPropertyRelative("pos");
         var moveRangeProp = property.FindPropertyRelative("move_range");
+        var isStartUpRightProp = property.FindPropertyRelative("is_start_up_right");
 
         float lineHeight = EditorGUIUtility.singleLineHeight;
         float spacing = 4f;
@@ -32,36 +33,38 @@ public class CharacterDataEditor : PropertyDrawer
         objIDProp.enumValueIndex = actualEnumValues[selected];
         lineRect.y += lineHeight + spacing;
 
-        // posはGOAL_ARROWまで表示
-        if (objIDProp.enumValueIndex <= (int)Obj_ID.GOAL_ARROW)
+        // ----------------------------
+        // pos は常に表示
+        // ----------------------------
+        EditorGUI.PropertyField(lineRect, posProp);
+        lineRect.y += lineHeight + spacing;
+
+        // ----------------------------
+        // 機雷 or サメ のときにのみ表示
+        // ----------------------------
+        if (objIDProp.enumValueIndex == (int)Obj_ID.MINE || objIDProp.enumValueIndex == (int)Obj_ID.SHARK)
         {
-            EditorGUI.PropertyField(lineRect, posProp);
+            // 移動幅
+            EditorGUI.PropertyField(lineRect, moveRangeProp);
             lineRect.y += lineHeight + spacing;
 
-            // move_rangeはMINEかSHARKのみ
-            if (objIDProp.enumValueIndex == (int)Obj_ID.MINE || objIDProp.enumValueIndex == (int)Obj_ID.SHARK)
-            {
-                EditorGUI.PropertyField(lineRect, moveRangeProp);
-                lineRect.y += lineHeight + spacing;
-            }
-
+            // 初期方向（右上からかどうか）
+            EditorGUI.PropertyField(lineRect, isStartUpRightProp);
+            lineRect.y += lineHeight + spacing;
         }
+
+        EditorGUI.EndProperty();
     }
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         var objIDProp = property.FindPropertyRelative("Obj_ID");
 
-        int lines = 1; // Obj_IDは常に表示
+        int lines = 2; // Obj_ID + pos
 
-        if (objIDProp.enumValueIndex <= (int)Obj_ID.GOAL_ARROW)
+        if (objIDProp.enumValueIndex == (int)Obj_ID.MINE || objIDProp.enumValueIndex == (int)Obj_ID.SHARK)
         {
-            lines++; // pos
-
-            if (objIDProp.enumValueIndex == (int)Obj_ID.MINE || objIDProp.enumValueIndex == (int)Obj_ID.SHARK)
-            {
-                lines++; // move_range
-            }
+            lines += 2; // move_range + is_start_up_right
         }
 
         float lineHeight = EditorGUIUtility.singleLineHeight;
@@ -69,6 +72,7 @@ public class CharacterDataEditor : PropertyDrawer
 
         return lines * (lineHeight + spacing);
     }
+
     private string[] GetLimitedObjIDNames()
     {
         Obj_ID[] all = (Obj_ID[])System.Enum.GetValues(typeof(Obj_ID));

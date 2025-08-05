@@ -224,8 +224,10 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                     case Obj_ID.MINE:
                     case Obj_ID.SHARK:
                         {
+                            Obj_Cave_Dive obj_data = obj.GetComponent<Obj_Cave_Dive>();
                             //機雷とサメに移動幅を設定
-                            obj.GetComponent<Obj_Cave_Dive>()._MoveRange = chara_data[i].move_range;
+                            obj_data._MoveRange = chara_data[i].move_range;
+                            obj_data._IsStart_Up_Right = chara_data[i].is_start_up_right;
                             break;
                         }
                 }
