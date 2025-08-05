@@ -180,7 +180,7 @@ namespace Common_Cave_Dive
         public static GameState gNOW_GAMESTATE = GameState.READY;
 
         //現在のステージレベル
-        public static int gNOW_STAGE_LEVEL = 1;
+        public static int gNOW_STAGE_LEVEL = 5;
 
         //各スクリプト
         public static Game_Manager_Cave_Dive    sGameManager;

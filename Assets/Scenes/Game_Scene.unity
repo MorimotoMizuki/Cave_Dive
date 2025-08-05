@@ -1136,9 +1136,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.30763888
+    x: 0.33541667
     y: 0
-    width: 0.38472223
+    width: 0.32916665
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -3589,7 +3589,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0b823f2898d51dd4dbf5a5fff99ed480, type: 3}
   - {fileID: 21300000, guid: 7024b30d1b01ab245855e4f6734ae7e2, type: 3}
   - {fileID: 21300000, guid: 1d02f964e389da9448bde467c6302fa2, type: 3}
-  - {fileID: 21300000, guid: 1d02f964e389da9448bde467c6302fa2, type: 3}
+  - {fileID: 21300000, guid: 30f78d41a68a4bb40823a47e2b60d303, type: 3}
   _BackGround_obj:
   - {fileID: 928075807}
   - {fileID: 846842765}
