@@ -17,38 +17,33 @@ public class CharacterDataEditor : PropertyDrawer
 
         float lineHeight = EditorGUIUtility.singleLineHeight;
         float spacing = 4f;
+
         Rect lineRect = new Rect(position.x, position.y, position.width, lineHeight);
 
-        // ----------------------------
-        // Obj_ID の制限付きドロップダウン
-        // ----------------------------
+        // Obj_ID 制限付きポップアップ
         string[] displayOptions = GetLimitedObjIDNames();
         int[] actualEnumValues = GetLimitedObjIDValues();
 
         int currentValue = objIDProp.enumValueIndex;
-        int limitedIndex = System.Array.IndexOf(actualEnumValues, currentValue);
+        int currentEnumValue = (int)((Obj_ID)currentValue);
+        int limitedIndex = System.Array.IndexOf(actualEnumValues, currentEnumValue);
         if (limitedIndex == -1) limitedIndex = 0;
 
         int selected = EditorGUI.Popup(lineRect, "Obj ID", limitedIndex, displayOptions);
         objIDProp.enumValueIndex = actualEnumValues[selected];
+        int selectedEnumValue = actualEnumValues[selected];
         lineRect.y += lineHeight + spacing;
 
-        // ----------------------------
-        // pos は常に表示
-        // ----------------------------
+        // pos 表示
         EditorGUI.PropertyField(lineRect, posProp);
         lineRect.y += lineHeight + spacing;
 
-        // ----------------------------
-        // 機雷 or サメ のときにのみ表示
-        // ----------------------------
-        if (objIDProp.enumValueIndex == (int)Obj_ID.MINE || objIDProp.enumValueIndex == (int)Obj_ID.SHARK)
+        // MINE or SHARK のときのみ追加表示
+        if (selectedEnumValue == (int)Obj_ID.MINE || selectedEnumValue == (int)Obj_ID.SHARK)
         {
-            // 移動幅
             EditorGUI.PropertyField(lineRect, moveRangeProp);
             lineRect.y += lineHeight + spacing;
 
-            // 初期方向（右上からかどうか）
             EditorGUI.PropertyField(lineRect, isStartUpRightProp);
             lineRect.y += lineHeight + spacing;
         }
@@ -60,9 +55,12 @@ public class CharacterDataEditor : PropertyDrawer
     {
         var objIDProp = property.FindPropertyRelative("Obj_ID");
 
+        int currentValue = objIDProp.enumValueIndex;
+        int currentEnumValue = (int)((Obj_ID)currentValue);
+
         int lines = 2; // Obj_ID + pos
 
-        if (objIDProp.enumValueIndex == (int)Obj_ID.MINE || objIDProp.enumValueIndex == (int)Obj_ID.SHARK)
+        if (currentEnumValue == (int)Obj_ID.MINE || currentEnumValue == (int)Obj_ID.SHARK)
         {
             lines += 2; // move_range + is_start_up_right
         }
@@ -70,7 +68,7 @@ public class CharacterDataEditor : PropertyDrawer
         float lineHeight = EditorGUIUtility.singleLineHeight;
         float spacing = 4f;
 
-        return lines * (lineHeight + spacing);
+        return lines * lineHeight + (lines - 1) * spacing;
     }
 
     private string[] GetLimitedObjIDNames()

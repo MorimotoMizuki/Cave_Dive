@@ -41,6 +41,9 @@ public class Obj_Cave_Dive : MonoBehaviour
 
     //機雷オブジェクトの機雷の状態管理用
     private Mine_State _Obj_MineState = Mine_State.READY;
+    //ゴール矢印の状態管理用
+    [HideInInspector]
+    public GoalMoveState _Obj_GoalState = GoalMoveState.INVISIBLE;
 
     //機雷とサメの移動幅
     [HideInInspector]
@@ -521,11 +524,15 @@ public class Obj_Cave_Dive : MonoBehaviour
     /// </summary>
     private void GoalArrow_Action()
     {
-        if (sGameManager._GoalMoveState == GoalMoveState.DISPLAY)
+        if (_Obj_GoalState == GoalMoveState.DISPLAY)
         {
             //不透明にする
             sImageManager.Change_Alpha(_Img, 1.0f);
-            sGameManager._GoalMoveState = GoalMoveState.DISPLAY_READY;
+
+            if(sGameManager._GoalMoveState == GoalMoveState.DISPLAY)
+                sGameManager._GoalMoveState = GoalMoveState.DISPLAY_READY;
+
+            _Obj_GoalState = GoalMoveState.DISPLAY_READY;
         }
     }
 

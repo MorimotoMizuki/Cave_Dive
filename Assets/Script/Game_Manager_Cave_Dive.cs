@@ -45,6 +45,8 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
     //財宝オブジェクトのリスト
     private List<GameObject> _Treasure_List = new List<GameObject>();
+    //ゴール矢印オブジェクトのリスト
+    private List<GameObject> _GoalArrow_List = new List<GameObject>();
 
     //タイマー関係
     private float _Limit_time;   //制限時間
@@ -117,6 +119,9 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
         _Treasure_List.Clear();
         _Treasure_List = new List<GameObject>();
+
+        _GoalArrow_List.Clear();
+        _GoalArrow_List = new List<GameObject>();
 
         //オブジェクトエリア内の子オブジェクトを全て削除
         foreach (Transform child in _Obj_area)
@@ -223,6 +228,12 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
                         {
                             //財宝のデータ追加
                             _Treasure_List.Add(obj);
+                            break;
+                        }
+                    case Obj_ID.GOAL_ARROW:
+                        {
+                            //ゴール矢印のデータ追加
+                            _GoalArrow_List.Add(obj);
                             break;
                         }
                     case Obj_ID.MINE:
@@ -406,6 +417,13 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
 
         //ゴールを表示フェーズにする
         _GoalMoveState = GoalMoveState.DISPLAY;
+
+        for(int i = 0; i < _GoalArrow_List.Count; i++)
+        {
+            //ゴール矢印オブジェクトの状態を表示状態にする
+            _GoalArrow_List[i].GetComponent<Obj_Cave_Dive>()._Obj_GoalState = GoalMoveState.DISPLAY;
+        }
+
 
         //ゴール表示
         sImageManager.Change_Active(_Goal_obj, true);
