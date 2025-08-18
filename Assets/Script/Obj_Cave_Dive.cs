@@ -99,6 +99,13 @@ public class Obj_Cave_Dive : MonoBehaviour
             case Obj_ID.GOAL_ARROW:
                 GoalArrow_Action();
                 break;
+            //ヒットマーク
+            case Obj_ID.HIT_MARK:
+                _Anim_cnt++;
+                //無敵フレーム数以上になった場合は削除
+                if (_Anim_cnt >= sGamePreference._Player__Invincible_Frame)
+                    sGameManager.Delete_Obj(gameObject);
+                break;
         }
     }
 
@@ -594,11 +601,18 @@ public class Obj_Cave_Dive : MonoBehaviour
             //岩
             case Obj_ID.ROCK:
                 {
+                    //プレイヤーがゴールインした場合は終了
+                    if (sGameManager._GoalMoveState == GoalMoveState.PLAYER_IN)
+                        break;
+
                     //ノックバック処理
                     KnockBack(collision, sGamePreference._Player_KnockBackSpeed);
 
-                    if (_PlayerState == Player_State.PLAY && sGameManager._GoalMoveState != GoalMoveState.PLAYER_IN)
+                    if (_PlayerState == Player_State.PLAY && gNOW_GAMESTATE == GameState.PLAYING)
                     {
+                        //ヒットマーク生成
+                        sGameManager.Create_HitMark(collision.gameObject.transform.position);
+
                         //空気ゲージを減少
                         sGameManager.Dec_AirGage_Timer(sGamePreference._Rock_DecAirGage);
                         sMusicManager.SE_Play(SE_ID.ROCK_HIT); //SE再生
@@ -609,6 +623,9 @@ public class Obj_Cave_Dive : MonoBehaviour
             //機雷
             case Obj_ID.MINE:
                 {
+                    if (gNOW_GAMESTATE != GameState.PLAYING)
+                        break;
+
                     //機雷爆発フェーズ
                     collision.transform.GetComponent<Obj_Cave_Dive>()._Obj_MineState = Mine_State.EXPLOSION;
                     sMusicManager.SE_Play_BGM_Stop(SE_ID.EXPLOSION); //SE再生
@@ -622,7 +639,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                     //ノックバック処理
                     KnockBack(collision, sGamePreference._Player_KnockBackSpeed * 3.0f);
 
-                    if (_PlayerState == Player_State.PLAY)
+                    if (_PlayerState == Player_State.PLAY && gNOW_GAMESTATE == GameState.PLAYING)
                     {
                         //空気ゲージを減少
                         sGameManager.Dec_AirGage_Timer(sGamePreference._Shark_DecAirGage);
@@ -637,7 +654,7 @@ public class Obj_Cave_Dive : MonoBehaviour
                     //ノックバック処理
                     KnockBack(collision, sGamePreference._Player_KnockBackSpeed);
 
-                    if (_PlayerState == Player_State.PLAY)
+                    if (_PlayerState == Player_State.PLAY && gNOW_GAMESTATE == GameState.PLAYING)
                         _PlayerState = Player_State.NO_OPERATION; //操作不可にする
 
                     break;

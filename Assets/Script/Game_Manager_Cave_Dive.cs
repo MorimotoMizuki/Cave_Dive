@@ -18,10 +18,15 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
     [Header("岩オブジェクトのプレハブ")]
     [SerializeField] private GameObject[] _Rock_prefab;
 
+    [Header("ヒットマークオブジェクトのプレハブ")]
+    [SerializeField] private GameObject _HitMark_prefab;
+
     [Header("生成オブジェクトの親オブジェクト")]
     [SerializeField] private Transform _Obj_area;
     [Header("岩オブジェクトの親オブジェクト")]
     [SerializeField] private Transform _Rock_area;
+    [Header("ヒットマークオブジェクトの親オブジェクト")]
+    [SerializeField] private Transform _HitMark_area;
 
     [Header("ゴールオブジェクト")]
     [SerializeField] private GameObject _Goal_obj;
@@ -431,4 +436,20 @@ public class Game_Manager_Cave_Dive : MonoBehaviour
         sImageManager.Change_Active(_Obstacle_obj, false);
     }
 
+    /// <summary>
+    /// ヒットマークを生成
+    /// </summary>
+    /// <param name="pos">生成座標</param>
+    public void Create_HitMark(Vector2 pos)
+    {
+        //ゲームプレイ中以外の場合は終了
+        if (gNOW_GAMESTATE != GameState.PLAYING)
+            return;
+
+        //ヒットマーク生成
+        GameObject hit_mark_obj = Instantiate(_HitMark_prefab,_HitMark_area);
+
+        //座標調整
+        hit_mark_obj.transform.position = pos;
+    }
 }

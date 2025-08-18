@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 70}
+  m_SizeDelta: {x: 70, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4926783833650827104
 CanvasRenderer:
@@ -91,6 +91,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Obj_ID: 4
+  _Obj_GoalState: 0
+  _MoveRange: 0
+  _IsStart_Up_Right: 1
 --- !u!50 &3070366293841901170
 Rigidbody2D:
   serializedVersion: 4
@@ -151,5 +154,5 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 100, y: 65}
+  m_Size: {x: 70, y: 45}
   m_Direction: 1
