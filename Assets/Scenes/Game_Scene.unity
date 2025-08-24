@@ -254,7 +254,8 @@ MonoBehaviour:
   screen_change: {fileID: 1373294664}
   image_manager: {fileID: 2115879507}
   csv_roader: {fileID: 800541848}
-  _AirGage_Time: 3c0000007800000078000000780000000e010000
+  _Stage_Num: 1
+  _AirGage_Time: 3c00000078000000780000007800000078000000
   _Player_Angle: 0000000003000000030000000300000003000000
   _Stage_Chara_Data:
   - StageNum: 1
@@ -274,7 +275,7 @@ MonoBehaviour:
   - StageNum: 2
     Chara_Data:
     - Obj_ID: 1
-      pos: {x: -100, y: 300}
+      pos: {x: -130, y: 300}
       move_range: 0
       is_start_up_right: 0
     - Obj_ID: 2
@@ -292,7 +293,7 @@ MonoBehaviour:
   - StageNum: 3
     Chara_Data:
     - Obj_ID: 1
-      pos: {x: -130, y: 360}
+      pos: {x: -170, y: 360}
       move_range: 0
       is_start_up_right: 0
     - Obj_ID: 2
@@ -368,7 +369,7 @@ MonoBehaviour:
   - StageNum: 5
     Chara_Data:
     - Obj_ID: 1
-      pos: {x: 105, y: 360}
+      pos: {x: 135, y: 360}
       move_range: 0
       is_start_up_right: 0
     - Obj_ID: 5
@@ -1140,9 +1141,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.2572531
+    x: 0.33320105
     y: 0
-    width: 0.4854938
+    width: 0.3335979
     height: 1
   near clip plane: 0.3
   far clip plane: 1000

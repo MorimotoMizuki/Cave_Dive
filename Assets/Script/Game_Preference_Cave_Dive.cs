@@ -15,6 +15,9 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     [SerializeField] private Image_Manager_Cave_Dive    image_manager;
     [SerializeField] private Csv_Roader_Cave_Dive       csv_roader;
 
+    [Header("初期ステージ番号")]
+    public int _Stage_Num = 1;
+
     [Header("ステージの空気ゲージ制限時間(秒)")]
     public int[] _AirGage_Time;
 
@@ -85,5 +88,7 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
         //60fps未満 : 3フレームごと
         else
             _Player_Anim_Cnt = 3;
+
+        gNOW_STAGE_LEVEL = _Stage_Num;
     }
 }
