@@ -42,6 +42,9 @@ public class Game_Preference_Cave_Dive : MonoBehaviour
     public float _Player_RotSpeed = 200.0f;
     [Header("プレイヤーのノックバック速度")]
     public float _Player_KnockBackSpeed = 3.0f;
+    [Header("プレイヤーの反転角度")]
+    [Range(0f, 180f)]
+    public float _Player_TurnAngle = 90.0f;
 
     [Header("機雷の基本の移動速度")]
     public float _Mine_MoveSpeed = 1.0f;

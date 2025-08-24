@@ -415,6 +415,7 @@ MonoBehaviour:
   _Player_MoveSpeed: 3
   _Player_RotSpeed: 200
   _Player_KnockBackSpeed: 0.6
+  _Player_TurnAngle: 90
   _Mine_MoveSpeed: 1
   _Shark_MoveSpeed: 1
   _Water_Drag: 2

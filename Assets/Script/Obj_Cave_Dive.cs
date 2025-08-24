@@ -316,7 +316,7 @@ public class Obj_Cave_Dive : MonoBehaviour
         float angle_diff = Mathf.DeltaAngle(current_angle, target_angle);
 
         // 角度差が閾値以下なら滑らかに補間
-        if (Mathf.Abs(angle_diff) < 90f)
+        if (Mathf.Abs(angle_diff) < sGamePreference._Player_TurnAngle)
         {
             float angle = Mathf.MoveTowardsAngle(current_angle, target_angle, sGamePreference._Player_RotSpeed * Time.deltaTime);
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
